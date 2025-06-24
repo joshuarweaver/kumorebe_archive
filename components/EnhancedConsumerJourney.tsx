@@ -70,7 +70,7 @@ interface JourneyStage {
 // Custom node component for the flow chart
 const CustomNode = ({ data }: { data: any }) => {
   return (
-    <div className={`px-4 py-3 rounded-xl border-2 ${data.color} bg-gradient-to-br from-neutral-900 to-neutral-800/50 backdrop-blur-sm min-w-[200px] shadow-lg hover:shadow-xl transition-all`}>
+    <div className={`px-4 py-3 rounded-xl border-2 ${data.color} bg-gradient-to-br from-card to-muted/50 backdrop-blur-sm min-w-[200px] shadow-lg hover:shadow-xl transition-all`}>
       <Handle type="target" position={Position.Top} className="!bg-green-500" />
       <div className="flex items-center gap-2 mb-2">
         <div className={`p-2 rounded-lg ${data.iconBg} backdrop-blur-sm`}>
@@ -78,17 +78,17 @@ const CustomNode = ({ data }: { data: any }) => {
         </div>
         <div>
           <div className="font-medium">{data.label}</div>
-          <div className="text-xs text-neutral-400">{data.subtitle}</div>
+          <div className="text-xs text-muted-foreground">{data.subtitle}</div>
         </div>
       </div>
       {data.metrics && (
-        <div className="text-xs space-y-1 mt-2 pt-2 border-t border-neutral-700">
+        <div className="text-xs space-y-1 mt-2 pt-2 border-t border-border">
           <div className="flex justify-between">
-            <span className="text-neutral-500">Volume:</span>
+            <span className="text-muted-foreground">Volume:</span>
             <span>{data.metrics.volume}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-neutral-500">Conversion:</span>
+            <span className="text-muted-foreground">Conversion:</span>
             <span className="text-green-400">{data.metrics.conversion}%</span>
           </div>
         </div>
@@ -268,7 +268,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
         subtitle: 'Paid + Organic',
         icon: <MessageCircle className="w-4 h-4" />,
         iconBg: 'bg-blue-500/20',
-        color: 'border-neutral-600'
+        color: 'border-muted-foreground'
       },
     },
     {
@@ -280,7 +280,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
         subtitle: 'Landing Pages',
         icon: <Zap className="w-4 h-4" />,
         iconBg: 'bg-purple-500/20',
-        color: 'border-neutral-600'
+        color: 'border-muted-foreground'
       },
     },
     {
@@ -292,7 +292,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
         subtitle: 'Nurture Sequence',
         icon: <UserCheck className="w-4 h-4" />,
         iconBg: 'bg-yellow-500/20',
-        color: 'border-neutral-600'
+        color: 'border-muted-foreground'
       },
     },
   ];
@@ -345,8 +345,8 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
         label: template.label,
         subtitle: 'New Touchpoint',
         icon: template.icon,
-        iconBg: 'bg-neutral-700',
-        color: 'border-neutral-600'
+        iconBg: 'bg-muted',
+        color: 'border-muted-foreground'
       }
     };
     
@@ -391,13 +391,13 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
       {/* Header */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-light mb-4">Consumer Journey & Conversion Funnel</h2>
-        <p className="text-neutral-400 max-w-2xl mx-auto">
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           Interactive visualization of the customer experience from awareness to advocacy
         </p>
       </div>
 
       {/* Funnel Chart */}
-      <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-8 border border-neutral-800 hover:border-neutral-700 transition-all shadow-xl hover:shadow-2xl">
+      <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 border border-border hover:border-muted-foreground transition-all shadow-xl hover:shadow-2xl">
         <h3 className="text-xl font-medium mb-6 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-green-400" />
           Conversion Funnel Analysis
@@ -407,23 +407,23 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
             <AreaChart data={funnelData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
               <defs>
                 <linearGradient id="colorConversion" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.5}/>
+                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0.05}/>
                 </linearGradient>
                 <linearGradient id="colorBenchmark" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6b7280" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#6b7280" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#71717a" stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor="#71717a" stopOpacity={0.05}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
               <XAxis 
                 dataKey="name" 
-                tick={{ fill: '#999' }}
-                axisLine={{ stroke: '#444' }}
+                tick={{ fill: '#a1a1aa' }}
+                axisLine={{ stroke: '#3f3f46' }}
               />
               <YAxis 
-                tick={{ fill: '#999' }}
-                axisLine={{ stroke: '#444' }}
+                tick={{ fill: '#a1a1aa' }}
+                axisLine={{ stroke: '#3f3f46' }}
                 domain={[0, 100]}
                 tickFormatter={(value) => `${value}%`}
               />
@@ -434,13 +434,13 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
               <Legend 
                 wrapperStyle={{ paddingTop: '20px' }}
                 iconType="line"
-                formatter={(value) => <span style={{ color: '#999' }}>{value}</span>}
+                formatter={(value) => <span style={{ color: '#a1a1aa' }}>{value}</span>}
               />
               <Area
                 type="monotone"
                 dataKey="benchmark"
                 name="Industry Benchmark"
-                stroke="#6b7280"
+                stroke="#71717a"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorBenchmark)"
@@ -461,9 +461,9 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
         <div className="mt-6 grid grid-cols-5 gap-2">
           {funnelData.map((stage, index) => (
             <div key={index} className="text-center">
-              <p className="text-xs text-neutral-500 mb-1">{stage.name}</p>
+              <p className="text-xs text-muted-foreground mb-1">{stage.name}</p>
               <p className="text-lg font-light text-green-400">{stage.conversion}%</p>
-              <p className="text-xs text-neutral-600">{stage.users} users</p>
+              <p className="text-xs text-muted-foreground/70">{stage.users} users</p>
             </div>
           ))}
         </div>
@@ -483,18 +483,18 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
                     </div>
                     <div>
                       <h4 className="font-medium text-sm">{stage.name}</h4>
-                      <p className="text-xs text-neutral-400">{(stage.metrics.volume / 1000).toFixed(0)}K users</p>
+                      <p className="text-xs text-muted-foreground">{(stage.metrics.volume / 1000).toFixed(0)}K users</p>
                     </div>
                   </div>
                   <div className="mt-3 text-center">
                     <p className="text-2xl font-light">{stage.metrics.conversionRate}%</p>
-                    <p className="text-xs text-neutral-500">conversion</p>
+                    <p className="text-xs text-muted-foreground">conversion</p>
                   </div>
                 </div>
               </div>
               {index < journeyStages.length - 1 && (
                 <div className="flex items-center mx-2">
-                  <ArrowRight className="w-6 h-6 text-neutral-500" />
+                  <ArrowRight className="w-6 h-6 text-muted-foreground" />
                   <span className="text-xs text-red-400 ml-1">
                     -{((journeyStages[index].metrics.volume - journeyStages[index + 1].metrics.volume) / journeyStages[index].metrics.volume * 100).toFixed(0)}%
                   </span>
@@ -506,15 +506,15 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
       </div>
 
       {/* Flow Chart */}
-      <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl border border-neutral-800 overflow-hidden shadow-xl hover:shadow-2xl transition-all">
-        <div className="p-6 border-b border-neutral-800">
+      <div className="bg-card/50 backdrop-blur-sm rounded-2xl border border-border overflow-hidden shadow-xl hover:shadow-2xl transition-all">
+        <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-medium flex items-center gap-2">
                 <Users className="w-5 h-5 text-green-400" />
                 Interactive Journey Flow
               </h3>
-              <p className="text-sm text-neutral-400 mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Drag nodes to reorganize • Add touchpoints to improve conversion
               </p>
             </div>
@@ -529,8 +529,8 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
           
           {/* Add Touchpoint Menu */}
           {showAddMenu && (
-            <div className="mt-4 p-4 bg-neutral-800/50 backdrop-blur-sm rounded-lg border border-neutral-700">
-              <p className="text-sm text-neutral-400 mb-3">Select a stage, then choose a touchpoint to add:</p>
+            <div className="mt-4 p-4 bg-muted/50 backdrop-blur-sm rounded-lg border border-border">
+              <p className="text-sm text-muted-foreground mb-3">Select a stage, then choose a touchpoint to add:</p>
               <div className="grid grid-cols-5 gap-2 mb-4">
                 {journeyStages.map((stage, index) => (
                   <button
@@ -539,7 +539,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
                     className={`p-2 rounded text-xs transition-colors ${
                       selectedStage === String(index)
                         ? 'bg-green-500 text-black'
-                        : 'bg-neutral-700 hover:bg-neutral-600'
+                        : 'bg-muted hover:bg-muted/80'
                     }`}
                   >
                     {stage.name}
@@ -552,7 +552,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
                     <button
                       key={template.id}
                       onClick={() => addTouchpoint(template, parseInt(selectedStage))}
-                      className="p-3 bg-neutral-700 rounded-lg hover:bg-neutral-600 transition-colors flex items-center gap-2"
+                      className="p-3 bg-muted rounded-lg hover:bg-muted/80 transition-colors flex items-center gap-2"
                     >
                       {template.icon}
                       <span className="text-xs">{template.label}</span>
@@ -572,10 +572,10 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
             onConnect={onConnect}
             nodeTypes={nodeTypes}
             fitView
-            className="bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950"
+            className="bg-gradient-to-br from-background via-card to-background"
           >
-            <Controls className="!bg-neutral-800/80 !backdrop-blur-sm !border-neutral-700 !shadow-xl" />
-            <Background variant="dots" gap={16} size={1} color="#333" />
+            <Controls className="!bg-card/80 !backdrop-blur-sm !border-border !shadow-xl" />
+            <Background variant="dots" gap={16} size={1} color="#27272a" />
           </ReactFlow>
         </div>
       </div>
@@ -585,21 +585,21 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
         <div className="bg-gradient-to-br from-green-500/20 via-green-600/10 to-transparent rounded-xl p-6 border border-green-500/30 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all">
           <CheckCircle2 className="w-5 h-5 text-green-400 mb-2" />
           <h4 className="font-medium mb-1">Strong Performance</h4>
-          <p className="text-sm text-neutral-400">
+          <p className="text-sm text-muted-foreground">
             Interest to Consideration conversion exceeds industry benchmark by 25%
           </p>
         </div>
         <div className="bg-gradient-to-br from-yellow-500/20 via-yellow-600/10 to-transparent rounded-xl p-6 border border-yellow-500/30 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all">
           <AlertCircle className="w-5 h-5 text-yellow-400 mb-2" />
           <h4 className="font-medium mb-1">Optimization Opportunity</h4>
-          <p className="text-sm text-neutral-400">
+          <p className="text-sm text-muted-foreground">
             Consideration to Action drop-off can be improved with better nurturing
           </p>
         </div>
         <div className="bg-gradient-to-br from-blue-500/20 via-blue-600/10 to-transparent rounded-xl p-6 border border-blue-500/30 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all">
           <TrendingUp className="w-5 h-5 text-blue-400 mb-2" />
           <h4 className="font-medium mb-1">Growth Potential</h4>
-          <p className="text-sm text-neutral-400">
+          <p className="text-sm text-muted-foreground">
             High advocacy rate indicates strong viral growth opportunity
           </p>
         </div>

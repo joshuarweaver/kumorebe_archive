@@ -7,6 +7,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { useEffect, useState } from 'react';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -26,6 +27,33 @@ interface CampaignOverviewProps {
 }
 
 export default function CampaignOverview({ campaign }: CampaignOverviewProps) {
+  const [chartColors, setChartColors] = useState({
+    primary: '#86a454',
+    muted: '#dcebc3',
+    card: '#ffffff',
+    foreground: '#000000',
+    border: '#dcebc3'
+  });
+
+  useEffect(() => {
+    // Get computed colors from CSS variables
+    const root = window.getComputedStyle(document.documentElement);
+    const getColor = (varName: string) => {
+      const rgb = root.getPropertyValue(varName).trim();
+      if (rgb) {
+        return `rgb(${rgb})`;
+      }
+      return '#000000';
+    };
+
+    setChartColors({
+      primary: getColor('--chartreuse-400'),
+      muted: getColor('--muted'),
+      card: getColor('--card'),
+      foreground: getColor('--foreground'),
+      border: getColor('--border')
+    });
+  }, []);
   // Handle both direct campaign object and database-stored campaign
   const strategicRationale = campaign.strategic_rationale || 
                            campaign.summary?.strategicRationale || 
@@ -82,10 +110,10 @@ export default function CampaignOverview({ campaign }: CampaignOverviewProps) {
         display: false,
       },
       tooltip: {
-        backgroundColor: '#1F2937',
-        titleColor: '#F9FAFB',
-        bodyColor: '#F9FAFB',
-        borderColor: '#374151',
+        backgroundColor: chartColors.card,
+        titleColor: chartColors.foreground,
+        bodyColor: chartColors.foreground,
+        borderColor: chartColors.border,
         borderWidth: 1,
       },
     },
@@ -94,40 +122,41 @@ export default function CampaignOverview({ campaign }: CampaignOverviewProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
       <div className="space-y-8">
-        <div className="bg-neutral-900/50 p-8 rounded-2xl border border-neutral-800">
-          <h3 className="text-xl font-medium mb-4 text-green-400">Strategic Rationale</h3>
-          <p className="text-neutral-300 leading-relaxed">
+        <div className="bg-card/50 p-8 rounded-2xl border border-border">
+          <h3 className="text-xl font-medium mb-4 text-primary">Strategic Rationale</h3>
+          <p className="text-muted-foreground leading-relaxed">
             {cleanMarkdown(strategicRationale)}
           </p>
         </div>
         
-        <div className="bg-neutral-900/50 p-8 rounded-2xl border border-neutral-800">
-          <h3 className="text-xl font-medium mb-4 text-blue-400">Target Audience</h3>
-          <p className="text-neutral-300 leading-relaxed text-sm">
+        <div className="bg-card/50 p-8 rounded-2xl border border-border">
+          <h3 className="text-xl font-medium mb-4 text-accent-foreground">Target Audience</h3>
+          <p className="text-muted-foreground leading-relaxed text-sm">
             {targetAudience}
           </p>
         </div>
       </div>
 
-      <div className="bg-neutral-900/50 p-8 rounded-2xl border border-neutral-800">
-        <h3 className="text-xl font-medium mb-6 text-purple-400">Cultural Impact Score</h3>
+      <div className="bg-card/50 p-8 rounded-2xl border border-border">
+        <h3 className="text-xl font-medium mb-6 text-accent-foreground">Cultural Impact Score</h3>
         <div className="h-64">
           <Doughnut 
             data={{
               labels: ['Achieved', 'Remaining'],
               datasets: [{
                 data: [65, 35],
-                backgroundColor: ['#10B981', '#374151'],
-                borderWidth: 0,
+                backgroundColor: [chartColors.primary, chartColors.muted],
+                borderColor: [chartColors.primary, chartColors.muted],
+                borderWidth: 2,
               }]
             }}
             options={chartOptions}
           />
         </div>
         <div className="text-center mt-4">
-          <p className="text-2xl font-bold text-green-400">65%</p>
-          <p className="text-sm text-neutral-400">Current Performance</p>
-          <p className="text-xs text-neutral-500 mt-2">Measures campaign's ability to shift cultural conversations and create lasting brand impact</p>
+          <p className="text-2xl font-bold text-primary">65%</p>
+          <p className="text-sm text-muted-foreground">Current Performance</p>
+          <p className="text-xs text-muted-foreground/60 mt-2">Measures campaign's ability to shift cultural conversations and create lasting brand impact</p>
         </div>
       </div>
     </div>

@@ -255,13 +255,13 @@ export default function Home() {
         </p>
       </div>
       <div className="absolute top-8 right-8 flex items-center gap-6">
-        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
           Pricing
         </button>
-        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
           Log in
         </button>
-        <button className="text-sm bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90 transition-colors">
+        <button className="text-sm bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90 transition-colors cursor-pointer">
           Sign up
         </button>
         <ThemeToggle />
@@ -300,7 +300,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setShowOverlay(true)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors border border-border hover:border-muted-foreground px-4 py-2 rounded"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors border border-border hover:border-muted-foreground px-4 py-2 rounded cursor-pointer"
             >
               What is this?
             </button>
@@ -323,7 +323,7 @@ export default function Home() {
                   setTimeout(() => handleSubmit(new Event('submit') as any), 100);
                 }
               }}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors border border-border hover:border-muted-foreground px-4 py-2 rounded"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors border border-border hover:border-muted-foreground px-4 py-2 rounded cursor-pointer"
             >
               Randomize
             </button>
@@ -336,7 +336,7 @@ export default function Home() {
           <div className="max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setShowOverlay(false)}
-              className="absolute top-8 right-8 text-muted-foreground hover:text-foreground transition-colors"
+              className="absolute top-8 right-8 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -374,7 +374,7 @@ export default function Home() {
             
             <button
               onClick={() => setShowOverlay(false)}
-              className="mt-8 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              className="mt-8 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               Got it →
             </button>

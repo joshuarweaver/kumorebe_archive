@@ -30,7 +30,7 @@ const ChartContainer = React.forwardRef<
       ref={ref}
       data-chart={id || chartId}
       className={cn(
-        "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-neutral-400 [&_.recharts-cartesian-grid_line]:stroke-neutral-800 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-neutral-600 [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-neutral-800 [&_.recharts-radial-bar-background-sector]:fill-neutral-900 [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-neutral-800 [&_.recharts-reference-line-line]:stroke-neutral-700 [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
+        "flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line]:stroke-border [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line-line]:stroke-border [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
         className
       )}
       {...props}
@@ -65,12 +65,12 @@ const ChartTooltip = ({
   return (
     <div
       className={cn(
-        "rounded-lg border border-neutral-800 bg-neutral-900 p-3 shadow-xl",
+        "rounded-lg border border-border bg-card p-3 shadow-xl",
         className
       )}
     >
       {label && (
-        <p className="mb-1 text-sm font-medium text-neutral-300">{label}</p>
+        <p className="mb-1 text-sm font-medium text-foreground">{label}</p>
       )}
       <div className="flex flex-col gap-1">
         {payload.map((entry: any, index: number) => (
@@ -80,9 +80,9 @@ const ChartTooltip = ({
                 className="h-2.5 w-2.5 rounded-sm"
                 style={{ backgroundColor: entry.color }}
               />
-              <span className="text-xs text-neutral-400">{entry.name}</span>
+              <span className="text-xs text-muted-foreground">{entry.name}</span>
             </div>
-            <span className="text-xs font-medium text-neutral-200">
+            <span className="text-xs font-medium text-foreground">
               {formatter ? formatter(entry.value) : entry.value}
             </span>
           </div>
@@ -101,7 +101,7 @@ const ChartLegend = ({ payload }: any) => {
             className="h-2.5 w-2.5 rounded-sm"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-xs text-neutral-400">{entry.value}</span>
+          <span className="text-xs text-muted-foreground">{entry.value}</span>
         </div>
       ))}
     </div>

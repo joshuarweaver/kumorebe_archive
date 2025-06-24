@@ -211,20 +211,20 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
 
   const getImportanceColor = (importance: string) => {
     switch(importance) {
-      case 'critical': return 'text-red-400 bg-red-500/10';
-      case 'high': return 'text-yellow-400 bg-yellow-500/10';
-      case 'medium': return 'text-blue-400 bg-blue-500/10';
-      default: return 'text-neutral-400 bg-neutral-500/10';
+      case 'critical': return 'text-destructive bg-destructive/10';
+      case 'high': return 'text-accent-foreground bg-accent/10';
+      case 'medium': return 'text-secondary-foreground bg-secondary/10';
+      default: return 'text-muted-foreground bg-muted/10';
     }
   };
 
   const getCategoryIcon = (category: string) => {
     switch(category) {
-      case 'awareness': return <TrendingUp className="w-4 h-4 text-blue-400" />;
-      case 'engagement': return <Activity className="w-4 h-4 text-purple-400" />;
-      case 'conversion': return <Target className="w-4 h-4 text-green-400" />;
-      case 'loyalty': return <Award className="w-4 h-4 text-orange-400" />;
-      default: return <BarChart3 className="w-4 h-4 text-neutral-400" />;
+      case 'awareness': return <TrendingUp className="w-4 h-4 text-accent-foreground" />;
+      case 'engagement': return <Activity className="w-4 h-4 text-secondary-foreground" />;
+      case 'conversion': return <Target className="w-4 h-4 text-primary" />;
+      case 'loyalty': return <Award className="w-4 h-4 text-accent-foreground" />;
+      default: return <BarChart3 className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -237,7 +237,7 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
     name: milestone.name,
     value: milestone.target,
     formattedValue: formatMetricValue(milestone.target, nsFormat.unit),
-    fill: index === roadmapMilestones.length - 1 ? '#22c55e' : '#525252'
+    fill: index === roadmapMilestones.length - 1 ? 'rgb(var(--chartreuse-400))' : 'rgb(var(--muted))'
   }));
 
   return (
@@ -245,7 +245,7 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
       {/* Header */}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-light mb-4">KPI Framework & Success Metrics</h2>
-        <p className="text-neutral-400 max-w-2xl mx-auto">
+        <p className="text-muted-foreground max-w-2xl mx-auto">
           Comprehensive measurement framework with industry benchmarks and strategic targets
         </p>
       </div>
@@ -253,30 +253,30 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
       {/* North Star Metric with Roadmap */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         {/* North Star Metric */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-green-500/20 via-green-600/10 to-transparent rounded-2xl p-8 border border-green-500/30 backdrop-blur-sm">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent" />
+        <div className="relative overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-transparent rounded-2xl p-8 border border-primary/30 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
           <div className="relative">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-green-500/20 rounded-xl backdrop-blur-sm">
-                <Award className="w-8 h-8 text-green-400" />
+              <div className="p-3 bg-primary/20 rounded-xl backdrop-blur-sm">
+                <Award className="w-8 h-8 text-primary" />
               </div>
               <div>
                 <h3 className="text-2xl font-medium">North Star Metric</h3>
-                <p className="text-neutral-400">{northStarMetric.name}</p>
+                <p className="text-muted-foreground">{northStarMetric.name}</p>
               </div>
             </div>
             <div className="text-center py-8">
-              <p className="text-7xl font-light text-green-400 drop-shadow-2xl">{nsFormat.formattedValue}</p>
-              <p className="text-sm text-neutral-400 mt-2">Campaign Target</p>
+              <p className="text-7xl font-light text-primary drop-shadow-2xl">{nsFormat.formattedValue}</p>
+              <p className="text-sm text-muted-foreground mt-2">Campaign Target</p>
             </div>
-            <p className="text-sm text-neutral-300 mt-4">{northStarMetric.description}</p>
+            <p className="text-sm text-muted-foreground mt-4">{northStarMetric.description}</p>
           </div>
         </div>
 
         {/* Roadmap to Success */}
-        <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-8 border border-neutral-800">
+        <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 border border-border">
           <h3 className="text-xl font-medium mb-6 flex items-center gap-2">
-            <Flag className="w-5 h-5 text-green-400" />
+            <Flag className="w-5 h-5 text-primary" />
             Roadmap to {nsFormat.formattedValue}
           </h3>
           
@@ -286,27 +286,27 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
               <AreaChart data={roadmapData}>
                 <defs>
                   <linearGradient id="colorRoadmap" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="rgb(var(--chartreuse-400))" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="rgb(var(--chartreuse-400))" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--border))" />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fill: '#999', fontSize: 10 }}
+                  tick={{ fill: 'rgb(var(--muted-foreground))', fontSize: 10 }}
                   angle={-45}
                   textAnchor="end"
                   height={60}
                 />
                 <YAxis 
-                  tick={{ fill: '#999', fontSize: 10 }}
+                  tick={{ fill: 'rgb(var(--muted-foreground))', fontSize: 10 }}
                   tickFormatter={(value) => formatMetricValue(value, nsFormat.unit)}
                 />
                 <Tooltip content={<ChartTooltip formatter={(value: any) => formatMetricValue(value, nsFormat.unit)} />} />
                 <Area
                   type="monotone"
                   dataKey="value"
-                  stroke="#22c55e"
+                  stroke="rgb(var(--chartreuse-400))"
                   strokeWidth={2}
                   fillOpacity={1}
                   fill="url(#colorRoadmap)"
@@ -321,11 +321,11 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
               <div key={index} className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${
-                    index === roadmapMilestones.length - 1 ? 'bg-green-500' : 'bg-neutral-600'
+                    index === roadmapMilestones.length - 1 ? 'bg-primary' : 'bg-muted'
                   }`} />
-                  <span className="text-neutral-400">{milestone.name}</span>
+                  <span className="text-muted-foreground">{milestone.name}</span>
                 </div>
-                <span className="text-neutral-500">{milestone.timeframe}</span>
+                <span className="text-muted-foreground/60">{milestone.timeframe}</span>
               </div>
             ))}
           </div>
@@ -339,32 +339,32 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
           
           // Data for vertical bar chart
           const barData = [
-            { name: 'Benchmark', value: kpi.benchmark, fill: '#525252' },
-            { name: 'Target', value: kpi.target, fill: '#22c55e' },
+            { name: 'Benchmark', value: kpi.benchmark, fill: 'rgb(var(--muted))' },
+            { name: 'Target', value: kpi.target, fill: 'rgb(var(--chartreuse-400))' },
           ];
 
           // Data for donut chart
           const donutData = [
-            { name: 'Lift', value: kpi.target - kpi.benchmark, fill: '#22c55e' },
-            { name: 'Base', value: kpi.benchmark, fill: '#262626' },
+            { name: 'Lift', value: kpi.target - kpi.benchmark, fill: 'rgb(var(--chartreuse-400))' },
+            { name: 'Base', value: kpi.benchmark, fill: 'rgb(var(--muted))' },
           ];
           
           return (
-            <div key={index} className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-8 border border-neutral-800 hover:border-neutral-700 transition-all shadow-xl hover:shadow-2xl">
+            <div key={index} className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 border border-border hover:border-accent transition-all shadow-xl hover:shadow-2xl">
               {/* KPI Header */}
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-neutral-800/50 rounded-xl backdrop-blur-sm">
+                  <div className="p-3 bg-muted/50 rounded-xl backdrop-blur-sm">
                     {getCategoryIcon(kpi.category)}
                   </div>
                   <div>
                     <h4 className="text-xl font-medium flex items-center gap-2">
                       {kpi.name}
-                      <button className="text-neutral-500 hover:text-neutral-300 transition-colors">
+                      <button className="text-muted-foreground hover:text-foreground transition-colors">
                         <Info className="w-4 h-4" />
                       </button>
                     </h4>
-                    <p className="text-sm text-neutral-400 mt-1">{kpi.definition}</p>
+                    <p className="text-sm text-muted-foreground mt-1">{kpi.definition}</p>
                   </div>
                 </div>
                 <span className={`text-xs px-3 py-1.5 rounded-full ${getImportanceColor(kpi.importance)}`}>
@@ -375,12 +375,12 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
               {/* Chart and Metrics */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Vertical Bar Chart */}
-                <div className="h-64 bg-neutral-950/50 rounded-xl p-4 border border-neutral-800">
+                <div className="h-64 bg-card/50 rounded-xl p-4 border border-border">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={barData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#333" />
-                      <XAxis dataKey="name" tick={{ fill: '#999' }} />
-                      <YAxis tick={{ fill: '#999' }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--border))" />
+                      <XAxis dataKey="name" tick={{ fill: 'rgb(var(--muted-foreground))' }} />
+                      <YAxis tick={{ fill: 'rgb(var(--muted-foreground))' }} />
                       <Tooltip content={<ChartTooltip formatter={(value: any) => formatMetricValue(value, kpi.unit)} />} />
                       <Bar dataKey="value" radius={[8, 8, 0, 0]}>
                         {barData.map((entry, idx) => (
@@ -392,7 +392,7 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
                 </div>
 
                 {/* Larger Donut Chart */}
-                <div className="h-64 bg-neutral-950/50 rounded-xl p-4 border border-neutral-800 flex items-center justify-center">
+                <div className="h-64 bg-card/50 rounded-xl p-4 border border-border flex items-center justify-center">
                   <div className="relative">
                     <ResponsiveContainer width={200} height={200}>
                       <PieChart>
@@ -414,7 +414,7 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
                     </ResponsiveContainer>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
-                        <p className="text-4xl font-light text-green-400">+{lift}%</p>
+                        <p className="text-4xl font-light text-primary">+{lift}%</p>
                       </div>
                     </div>
                   </div>
@@ -422,26 +422,26 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
 
                 {/* Metrics Display */}
                 <div className="flex flex-col justify-center space-y-4">
-                  <div className="bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-xl p-6 border border-green-500/20 backdrop-blur-sm">
-                    <p className="text-sm text-neutral-400 mb-2">Campaign Target</p>
-                    <p className="text-4xl font-light text-green-400">{formatMetricValue(kpi.target, kpi.unit)}</p>
+                  <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-xl p-6 border border-primary/20 backdrop-blur-sm">
+                    <p className="text-sm text-muted-foreground mb-2">Campaign Target</p>
+                    <p className="text-4xl font-light text-primary">{formatMetricValue(kpi.target, kpi.unit)}</p>
                   </div>
-                  <div className="bg-neutral-950/50 rounded-xl p-6 border border-neutral-800">
-                    <p className="text-sm text-neutral-500 mb-2">Industry Benchmark</p>
-                    <p className="text-3xl font-light text-neutral-400">{formatMetricValue(kpi.benchmark, kpi.unit)}</p>
+                  <div className="bg-muted/50 rounded-xl p-6 border border-border">
+                    <p className="text-sm text-muted-foreground/60 mb-2">Industry Benchmark</p>
+                    <p className="text-3xl font-light text-muted-foreground">{formatMetricValue(kpi.benchmark, kpi.unit)}</p>
                   </div>
                 </div>
               </div>
 
               {/* Insights */}
-              <div className="mt-6 pt-6 border-t border-neutral-800">
+              <div className="mt-6 pt-6 border-t border-border">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-green-500/10 rounded-lg">
-                    <ArrowUp className="w-4 h-4 text-green-400" />
+                  <div className="p-2 bg-primary/10 rounded-lg">
+                    <ArrowUp className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-green-400 font-medium">{lift}% above industry standard</p>
-                    <p className="text-sm text-neutral-400 mt-1">{kpi.description}</p>
+                    <p className="text-primary font-medium">{lift}% above industry standard</p>
+                    <p className="text-sm text-muted-foreground mt-1">{kpi.description}</p>
                   </div>
                 </div>
               </div>
@@ -451,59 +451,59 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
       </div>
 
       {/* Success Criteria */}
-      <div className="bg-gradient-to-r from-neutral-900/50 to-neutral-800/50 backdrop-blur-sm rounded-2xl p-8 border border-neutral-700">
+      <div className="bg-gradient-to-r from-card/50 to-muted/50 backdrop-blur-sm rounded-2xl p-8 border border-border">
         <h3 className="text-xl font-medium mb-6 flex items-center gap-2">
-          <Target className="w-5 h-5 text-green-400" />
+          <Target className="w-5 h-5 text-primary" />
           Campaign Success Criteria
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-neutral-950/30 rounded-xl p-6 border border-neutral-800">
-            <h4 className="text-sm font-medium text-green-400 mb-3">Minimum Success</h4>
-            <ul className="text-sm text-neutral-300 space-y-2">
+          <div className="bg-card/30 rounded-xl p-6 border border-border">
+            <h4 className="text-sm font-medium text-primary mb-3">Minimum Success</h4>
+            <ul className="text-sm text-muted-foreground space-y-2">
               <li className="flex items-start gap-2">
-                <span className="text-green-500 mt-0.5">•</span>
+                <span className="text-primary mt-0.5">•</span>
                 <span>Meet 80% of KPI targets</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-500 mt-0.5">•</span>
+                <span className="text-primary mt-0.5">•</span>
                 <span>Exceed industry benchmarks</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-green-500 mt-0.5">•</span>
+                <span className="text-primary mt-0.5">•</span>
                 <span>Positive sentiment > 70%</span>
               </li>
             </ul>
           </div>
-          <div className="bg-neutral-950/30 rounded-xl p-6 border border-neutral-800">
-            <h4 className="text-sm font-medium text-yellow-400 mb-3">Target Success</h4>
-            <ul className="text-sm text-neutral-300 space-y-2">
+          <div className="bg-card/30 rounded-xl p-6 border border-border">
+            <h4 className="text-sm font-medium text-accent-foreground mb-3">Target Success</h4>
+            <ul className="text-sm text-muted-foreground space-y-2">
               <li className="flex items-start gap-2">
-                <span className="text-yellow-500 mt-0.5">•</span>
+                <span className="text-accent-foreground mt-0.5">•</span>
                 <span>Achieve 100% of KPI targets</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-yellow-500 mt-0.5">•</span>
+                <span className="text-accent-foreground mt-0.5">•</span>
                 <span>25% above benchmarks</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-yellow-500 mt-0.5">•</span>
+                <span className="text-accent-foreground mt-0.5">•</span>
                 <span>Viral coefficient > 1.5</span>
               </li>
             </ul>
           </div>
-          <div className="bg-neutral-950/30 rounded-xl p-6 border border-neutral-800">
-            <h4 className="text-sm font-medium text-blue-400 mb-3">Breakthrough Success</h4>
-            <ul className="text-sm text-neutral-300 space-y-2">
+          <div className="bg-card/30 rounded-xl p-6 border border-border">
+            <h4 className="text-sm font-medium text-secondary-foreground mb-3">Breakthrough Success</h4>
+            <ul className="text-sm text-muted-foreground space-y-2">
               <li className="flex items-start gap-2">
-                <span className="text-blue-500 mt-0.5">•</span>
+                <span className="text-secondary-foreground mt-0.5">•</span>
                 <span>Exceed targets by 20%+</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-500 mt-0.5">•</span>
+                <span className="text-secondary-foreground mt-0.5">•</span>
                 <span>Category-leading metrics</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-blue-500 mt-0.5">•</span>
+                <span className="text-secondary-foreground mt-0.5">•</span>
                 <span>Cultural moment creation</span>
               </li>
             </ul>

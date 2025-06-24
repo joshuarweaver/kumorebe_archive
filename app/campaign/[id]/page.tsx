@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { ThemeToggle } from '@/components/theme-toggle';
 import CampaignHeader from '@/components/CampaignHeader';
 import CampaignOverview from '@/components/CampaignOverview';
 import EnhancedPersonas from '@/components/EnhancedPersonas';
@@ -42,9 +43,9 @@ export default function CampaignPage() {
     return (
       <div className="max-w-7xl mx-auto px-8 py-24">
         <div className="animate-pulse">
-          <div className="h-20 bg-neutral-800 rounded mb-6"></div>
-          <div className="h-8 bg-neutral-800 rounded w-1/2 mb-4"></div>
-          <div className="h-6 bg-neutral-800 rounded w-3/4"></div>
+          <div className="h-20 bg-muted rounded mb-6"></div>
+          <div className="h-8 bg-muted rounded w-1/2 mb-4"></div>
+          <div className="h-6 bg-muted rounded w-3/4"></div>
         </div>
       </div>
     );
@@ -54,8 +55,8 @@ export default function CampaignPage() {
     return (
       <div className="max-w-7xl mx-auto px-8 py-24 text-center">
         <h1 className="text-4xl font-light mb-4">Campaign Not Found</h1>
-        <p className="text-neutral-400 mb-8">{error || 'This campaign does not exist.'}</p>
-        <Link href="/" className="text-green-400 hover:text-green-300">
+        <p className="text-muted-foreground mb-8">{error || 'This campaign does not exist.'}</p>
+        <Link href="/" className="text-primary hover:text-primary/80 cursor-pointer">
           ← Back to Home
         </Link>
       </div>
@@ -72,8 +73,19 @@ export default function CampaignPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-8 py-24">
-      <CampaignHeader campaign={campaign} />
+    <div className="min-h-screen">
+      {/* Sticky Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
+          <Link href="/" className="text-2xl font-chillax font-medium text-foreground hover:text-primary transition-colors cursor-pointer">
+            kumorebe
+          </Link>
+          <ThemeToggle />
+        </div>
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-8 pt-32 pb-24">
+        <CampaignHeader campaign={campaign} />
       
       {/* Strategic Overview Section */}
       <section className="mb-16">
@@ -99,7 +111,7 @@ export default function CampaignPage() {
       <section className="mb-16 scroll-mt-24" id="creative">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-light mb-4">Creative Execution</h2>
-          <p className="text-neutral-400 max-w-2xl mx-auto">
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             Strategic narrative and activation approach designed to maximize cultural impact
           </p>
         </div>
@@ -107,10 +119,10 @@ export default function CampaignPage() {
       </section>
       
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 mt-16 pt-16 border-t border-neutral-800">
+      <div className="flex flex-col sm:flex-row gap-4 mt-16 pt-16 border-t border-border">
         <button
           onClick={() => router.push('/')}
-          className="px-8 py-3 bg-green-500 text-black rounded-lg hover:bg-green-400 transition-colors font-medium"
+          className="px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium cursor-pointer"
         >
           Generate New Campaign
         </button>
@@ -120,28 +132,29 @@ export default function CampaignPage() {
             navigator.clipboard.writeText(url);
             alert('Campaign URL copied to clipboard!');
           }}
-          className="px-8 py-3 border border-neutral-600 text-white rounded-lg hover:bg-neutral-800 transition-colors"
+          className="px-8 py-3 border border-border text-foreground rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
         >
           Share Campaign
         </button>
       </div>
 
       {/* Sticky Navigation */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-neutral-900 rounded-full px-2 py-2 border border-neutral-800 shadow-2xl z-50">
+      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-card/95 backdrop-blur-md rounded-full px-2 py-2 border border-border shadow-2xl z-50">
         <nav className="flex gap-2">
-          <a href="#audience" className="px-4 py-2 text-sm hover:bg-neutral-800 rounded-full transition-colors">
+          <a href="#audience" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
             Audience
           </a>
-          <a href="#journey" className="px-4 py-2 text-sm hover:bg-neutral-800 rounded-full transition-colors">
+          <a href="#journey" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
             Journey
           </a>
-          <a href="#kpis" className="px-4 py-2 text-sm hover:bg-neutral-800 rounded-full transition-colors">
+          <a href="#kpis" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
             KPIs
           </a>
-          <a href="#creative" className="px-4 py-2 text-sm hover:bg-neutral-800 rounded-full transition-colors">
+          <a href="#creative" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
             Creative
           </a>
         </nav>
+      </div>
       </div>
     </div>
   );

@@ -23,11 +23,11 @@ export default function CampaignHeader({ campaign }: CampaignHeaderProps) {
   
   return (
     <div className="mb-12">
-      <h1 className="text-7xl font-light mb-6 bg-gradient-to-r from-white to-neutral-400 bg-clip-text text-transparent">
+      <h1 className="text-7xl font-light mb-6 text-foreground">
         {cleanMarkdown(campaignName)}
       </h1>
-      <p className="text-2xl text-green-400 mb-4">{cleanMarkdown(tagline)}</p>
-      <p className="text-lg text-neutral-300 leading-relaxed max-w-4xl">
+      <p className="text-2xl text-primary mb-4">{cleanMarkdown(tagline)}</p>
+      <p className="text-lg text-muted-foreground leading-relaxed max-w-4xl">
         {cleanMarkdown(bigIdea)}
       </p>
     </div>
