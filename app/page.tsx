@@ -2,17 +2,11 @@
 
 import { useState, useEffect, useRef } from 'react';
 
-const examples = [
-  "Create a viral movement that exposes how big tech algorithms manipulate our emotions, turning users into activists who demand transparent AI and data ownership rights",
-  "Launch a luxury sustainable fashion brand that makes eco-conscious choices more desirable than fast fashion by partnering with Gen Z influencers to showcase upcycled haute couture",
-  "Build a mental health platform that destigmatizes therapy by gamifying emotional wellness and creating social challenges where vulnerability becomes a superpower among young professionals",
-  "Develop a revolutionary banking app for Gen Z that shows exactly how banks profit from their money, offers radical fee transparency, and lets users invest in causes they believe in",
-  "Transform corporate education by creating an underground learning network where industry rebels teach real skills that universities won't, making traditional degrees obsolete",
-  "Disrupt the beauty industry by launching a campaign that celebrates unfiltered reality, using AR to show what models really look like and exposing the manipulation behind beauty standards",
-  "Create a food delivery service that connects consumers directly with local farms, showing the true cost of industrial agriculture and making farm-to-table accessibility a social justice movement",
-  "Build a dating app that matches people based on their activism and values rather than looks, creating meaningful connections through shared missions to change the world",
-  "Launch a fitness brand that rejects toxic gym culture by celebrating all body types and making strength training accessible through community-based outdoor workouts in underserved neighborhoods",
-  "Develop a travel platform that shows the real impact of tourism on local communities and creates regenerative travel experiences where visitors contribute more than they consume"
+// Initial examples - will be replaced by dynamic AI-generated ones
+const defaultExamples = [
+  "Create a luxury sustainable fashion brand that makes eco-conscious choices more desirable than fast fashion by partnering with Gen Z influencers",
+  "Build a mental health platform that gamifies therapy and creates social challenges where vulnerability becomes a superpower among young professionals",
+  "Launch a banking app for Gen Z that shows exactly how banks profit from their money and offers transparent alternatives for building wealth"
 ];
 
 export default function Home() {
@@ -20,7 +14,21 @@ export default function Home() {
   const [input, setInput] = useState('');
   const [placeholder, setPlaceholder] = useState('');
   const [campaign, setCampaign] = useState<any>(null);
+  const [showOverlay, setShowOverlay] = useState(false);
+  const [examples, setExamples] = useState(defaultExamples);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Fetch dynamic prompts on mount
+  useEffect(() => {
+    fetch('/api/prompts')
+      .then(res => res.json())
+      .then(data => {
+        if (data.prompts && data.prompts.length > 0) {
+          setExamples(data.prompts);
+        }
+      })
+      .catch(err => console.error('Failed to load prompts:', err));
+  }, []);
   
   useEffect(() => {
     let j = 0;
@@ -51,7 +59,7 @@ export default function Home() {
     
     const interval = setInterval(type, deleting ? 20 : 60);
     return () => clearInterval(interval);
-  }, []);
+  }, [examples]);
   
   useEffect(() => {
     inputRef.current?.focus();
@@ -198,7 +206,7 @@ export default function Home() {
       </div>
       
       <div className="min-h-screen flex items-center justify-center px-8">
-        <form onSubmit={handleSubmit} className="w-full max-w-4xl">
+        <form onSubmit={handleSubmit} className="w-full max-w-4xl relative">
           <textarea
             ref={inputRef}
             value={input}
@@ -220,8 +228,92 @@ export default function Home() {
             <span className="text-sm text-neutral-600">{input.length} / 2100</span>
             <span className="text-sm text-neutral-500">press cmd+enter →</span>
           </div>
+          
+          <div className="flex gap-4 mt-8">
+            <button
+              type="button"
+              onClick={() => setShowOverlay(true)}
+              className="text-sm text-neutral-500 hover:text-white transition-colors border border-neutral-800 hover:border-neutral-600 px-4 py-2 rounded"
+            >
+              What is this?
+            </button>
+            <button
+              type="button"
+              onClick={async () => {
+                // Fetch fresh prompts for randomize
+                try {
+                  const res = await fetch('/api/prompts');
+                  const data = await res.json();
+                  if (data.prompts && data.prompts.length > 0) {
+                    const randomExample = data.prompts[Math.floor(Math.random() * data.prompts.length)];
+                    setInput(randomExample);
+                    setTimeout(() => handleSubmit(new Event('submit') as any), 100);
+                  }
+                } catch (err) {
+                  // Fallback to current examples
+                  const randomExample = examples[Math.floor(Math.random() * examples.length)];
+                  setInput(randomExample);
+                  setTimeout(() => handleSubmit(new Event('submit') as any), 100);
+                }
+              }}
+              className="text-sm text-neutral-500 hover:text-white transition-colors border border-neutral-800 hover:border-neutral-600 px-4 py-2 rounded"
+            >
+              Randomize
+            </button>
+          </div>
         </form>
       </div>
+      
+      {showOverlay && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center px-8" onClick={() => setShowOverlay(false)}>
+          <div className="max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+            <button
+              onClick={() => setShowOverlay(false)}
+              className="absolute top-8 right-8 text-neutral-500 hover:text-white transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            
+            <h2 className="text-3xl font-light mb-8">How Kumorebe Works</h2>
+            
+            <div className="space-y-6 text-neutral-300">
+              <div>
+                <h3 className="text-white font-medium mb-2">Strategy-First AI</h3>
+                <p className="text-sm leading-relaxed">Unlike typical AI tools that generate generic content, Kumorebe thinks like a Chief Strategy Officer. It identifies cultural tensions, finds ideological opportunities, and creates campaigns that catalyze movements.</p>
+              </div>
+              
+              <div>
+                <h3 className="text-white font-medium mb-2">How to Use</h3>
+                <p className="text-sm leading-relaxed">Describe your campaign vision in detail. Include your brand, target audience, the problem you're solving, and the cultural shift you want to create. The more context you provide, the more breakthrough your campaign will be.</p>
+              </div>
+              
+              <div>
+                <h3 className="text-white font-medium mb-2">What You Get</h3>
+                <p className="text-sm leading-relaxed">A complete campaign strategy including the big idea, target audience personas, KPIs, media strategy, and creative concepts. Every element is designed to create cultural impact, not just impressions.</p>
+              </div>
+              
+              <div>
+                <h3 className="text-white font-medium mb-2">Tips for Best Results</h3>
+                <ul className="text-sm leading-relaxed space-y-1">
+                  <li>• Be specific about the cultural tension you want to address</li>
+                  <li>• Include your brand values and what makes you different</li>
+                  <li>• Describe your audience's beliefs, not just demographics</li>
+                  <li>• Think about the change you want to see in the world</li>
+                </ul>
+              </div>
+            </div>
+            
+            <button
+              onClick={() => setShowOverlay(false)}
+              className="mt-8 text-sm text-neutral-500 hover:text-white transition-colors"
+            >
+              Got it →
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
