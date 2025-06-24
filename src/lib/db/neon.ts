@@ -20,7 +20,6 @@ export async function createTables() {
   await sql`
     CREATE TABLE IF NOT EXISTS campaign_vectors (
       campaign_id UUID REFERENCES campaigns(id) ON DELETE CASCADE,
-      embedding VECTOR(1536),
       model_version VARCHAR(50),
       metadata JSONB,
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -33,7 +32,6 @@ export async function createTables() {
       node_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
       node_type VARCHAR(50) NOT NULL,
       properties JSONB NOT NULL,
-      embedding VECTOR(1536),
       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
     )
   `;

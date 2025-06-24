@@ -1,4 +1,4 @@
-import { callDeepInfra, DEEPINFRA_MODELS } from '@/lib/ai/deepinfra';
+import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
 import { getCachedData, setCachedData, CACHE_KEYS, CACHE_TTL } from '@/lib/cache/redis';
 import { generateEmbedding } from '@/lib/ai/deepinfra';
 import { upsertVector } from '@/lib/ai/vector';
@@ -27,8 +27,8 @@ export class CulturalStrategyEngine {
     
     Identify the most potent cultural tensions and ideological opportunities for breakthrough campaigns.`;
 
-    const response = await callDeepInfra(
-      DEEPINFRA_MODELS.DEEPSEEK_R1.id,
+    const response = await callGroq(
+      GROQ_MODELS.LLAMA_70B.id,
       [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
@@ -88,8 +88,8 @@ export class CulturalStrategyEngine {
     2. Challenger myths emerging from subcultures
     3. Source codes that could disrupt the orthodoxy`;
 
-    const response = await callDeepInfra(
-      DEEPINFRA_MODELS.DEEPSEEK_R1.id,
+    const response = await callGroq(
+      GROQ_MODELS.LLAMA_70B.id,
       [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: `Industry: ${industry}\nCurrent Narratives: ${currentNarratives.join(', ')}` }

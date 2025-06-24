@@ -149,7 +149,7 @@ export class ModelOrchestrator {
       case 'pattern-recognition':
         return {
           provider: 'groq',
-          model: GROQ_MODELS.MIXTRAL.id,
+          model: GROQ_MODELS.GEMMA2.id,
           temperature: 0.5,
           maxTokens: 2000,
         };
@@ -157,7 +157,7 @@ export class ModelOrchestrator {
       default:
         return {
           provider: 'deepinfra',
-          model: DEEPINFRA_MODELS.LLAMA4.id,
+          model: DEEPINFRA_MODELS.LLAMA3.id,
           temperature: 0.7,
           maxTokens: 2000,
         };

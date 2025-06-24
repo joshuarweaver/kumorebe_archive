@@ -11,17 +11,17 @@ export interface DeepInfraModel {
 export const DEEPINFRA_MODELS: Record<string, DeepInfraModel> = {
   DEEPSEEK_R1: {
     name: 'DeepSeek R1',
-    id: 'deepseek-ai/DeepSeek-R1-Distill-Qwen-14B',
+    id: 'deepseek-ai/DeepSeek-R1',
     capabilities: ['reasoning', 'analysis', 'strategy'],
   },
   QWEN3: {
-    name: 'Qwen 3',
-    id: 'Qwen/QwQ-32B-Preview',
+    name: 'Qwen QwQ',
+    id: 'Qwen/QwQ-32B',
     capabilities: ['creative', 'generation', 'ideation'],
   },
-  LLAMA4: {
-    name: 'Llama 4',
-    id: 'meta-llama/Llama-3.3-70B-Instruct',
+  LLAMA3: {
+    name: 'Llama 3.2',
+    id: 'meta-llama/Llama-3.2-90B-Vision-Instruct',
     capabilities: ['general', 'fast', 'versatile'],
   },
 };
@@ -51,7 +51,9 @@ export async function callDeepInfra(
   });
 
   if (!response.ok) {
-    throw new Error(`DeepInfra API error: ${response.statusText}`);
+    const errorBody = await response.text();
+    console.error('DeepInfra API error:', response.status, errorBody);
+    throw new Error(`DeepInfra API error: ${response.status} ${response.statusText} - ${errorBody}`);
   }
 
   return response.json();
@@ -65,7 +67,7 @@ export async function generateEmbedding(text: string): Promise<number[]> {
       'Authorization': `Bearer ${env.DEEPINFRA_API_KEY}`,
     },
     body: JSON.stringify({
-      model: 'BAAI/bge-large-en-v1.5',
+      model: 'sentence-transformers/all-MiniLM-L6-v2',
       input: text,
     }),
   });

@@ -17,10 +17,15 @@ export const GROQ_MODELS: Record<string, GroqModel> = {
     id: 'llama-3.3-70b-versatile',
     capabilities: ['general', 'fast', 'analysis'],
   },
-  MIXTRAL: {
-    name: 'Mixtral 8x7B',
-    id: 'mixtral-8x7b-32768',
-    capabilities: ['reasoning', 'long-context'],
+  LLAMA_8B: {
+    name: 'Llama 3.1 8B',
+    id: 'llama-3.1-8b-instant',
+    capabilities: ['fast', 'general'],
+  },
+  GEMMA2: {
+    name: 'Gemma 2 9B',
+    id: 'gemma2-9b-it',
+    capabilities: ['reasoning', 'analysis'],
   },
 };
 
