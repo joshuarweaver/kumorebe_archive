@@ -1,0 +1,28 @@
+.darkControls :global(.react-flow__controls) {
+  background-color: #262626;
+  border: 1px solid #404040;
+}
+
+.darkControls :global(.react-flow__controls-button) {
+  background-color: #262626 !important;
+  border: 1px solid #404040 !important;
+  color: #fff !important;
+  fill: #fff !important;
+}
+
+.darkControls :global(.react-flow__controls-button:hover) {
+  background-color: #404040 !important;
+}
+
+.darkControls :global(.react-flow__controls-button svg) {
+  fill: #fff !important;
+}
+
+.darkControls :global(.react-flow__minimap) {
+  background-color: #262626;
+  border: 1px solid #404040;
+}
+
+.darkControls :global(.react-flow__minimap-mask) {
+  fill: #fff;
+}

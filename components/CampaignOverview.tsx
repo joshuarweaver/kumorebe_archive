@@ -33,12 +33,41 @@ export default function CampaignOverview({ campaign }: CampaignOverviewProps) {
                            campaign.summary_data?.fullSummary || 
                            'Strategic analysis generating...';
                            
-  const targetAudience = campaign.target_audience || 
-                        campaign.audience_data?.primaryPersona?.psychographics ||
-                        campaign.audience_data?.description ||
-                        campaign.audience?.primaryPersona?.psychographics || 
-                        campaign.audience?.description || 
-                        'Culture creators and change makers who value authenticity and bold action';
+  // Generate comprehensive target audience description
+  const getTargetAudienceDescription = () => {
+    if (campaign.audience_data?.fullStrategy) {
+      // Extract a meaningful paragraph from the full strategy
+      const strategy = campaign.audience_data.fullStrategy;
+      const primaryMatch = strategy.match(/PRIMARY PERSONA[\s\S]*?(?=SECONDARY|AUDIENCE|$)/i)?.[0] || '';
+      const psychMatch = primaryMatch.match(/Psychographic[\s\S]*?(?=Media|Pain|$)/i)?.[0] || '';
+      if (psychMatch) {
+        return cleanMarkdown(psychMatch);
+      }
+    }
+    
+    // Build from structured data if available
+    if (campaign.audience_data?.personas?.length > 0) {
+      const personas = campaign.audience_data.personas;
+      const primary = personas.find((p: any) => p.name) || personas[0];
+      const secondary = personas.length > 1 ? personas[1] : null;
+      
+      let description = `Our primary audience consists of ${primary.age} year old ${primary.occupation}s who ${primary.bio} `;
+      description += `They value ${primary.psychographics?.values?.slice(0, 3).join(', ')} and are motivated by ${primary.psychographics?.motivations?.slice(0, 2).join(' and ')}. `;
+      
+      if (secondary) {
+        description += `Our secondary audience includes ${secondary.occupation}s who ${secondary.bio} `;
+        description += `This diverse audience shares common ground in ${campaign.audience_data?.insights?.commonGround || 'their values and aspirations'}.`;
+      }
+      
+      return description;
+    }
+    
+    // Fallback to basic description
+    return campaign.target_audience || 
+           'Our campaign targets progressive millennials and Gen Z consumers aged 25-40 who are digital natives, value authenticity over perfection, and actively seek brands that align with their personal values. They are early adopters, cultural influencers within their communities, and prioritize experiences over material possessions. This audience consumes media across multiple platforms, engages deeply with causes they believe in, and expects brands to take meaningful stances on social issues.';
+  };
+  
+  const targetAudience = getTargetAudienceDescription();
                         
   const northStarMetric = campaign.kpi_data?.northStarMetric?.metric ||
                          campaign.kpis?.northStarMetric?.metric ||
@@ -74,8 +103,8 @@ export default function CampaignOverview({ campaign }: CampaignOverviewProps) {
         
         <div className="bg-neutral-900/50 p-8 rounded-2xl border border-neutral-800">
           <h3 className="text-xl font-medium mb-4 text-blue-400">Target Audience</h3>
-          <p className="text-neutral-300 leading-relaxed">
-            {cleanMarkdown(targetAudience)}
+          <p className="text-neutral-300 leading-relaxed text-sm">
+            {targetAudience}
           </p>
         </div>
       </div>
