@@ -1,7 +1,7 @@
-import { ModelTask, ModelResponse, ModelConfig } from '@/types/models';
-import { callDeepInfra, DEEPINFRA_MODELS } from '@/lib/ai/deepinfra';
-import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
-import { getCachedData, setCachedData } from '@/lib/cache/redis';
+import { ModelTask, ModelResponse, ModelConfig } from '@/src/types/models';
+import { callDeepInfra, DEEPINFRA_MODELS } from '@/src/lib/ai/deepinfra';
+import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
+import { getCachedData, setCachedData } from '@/src/lib/cache/redis';
 
 export class ModelOrchestrator {
   private taskQueue: ModelTask[] = [];

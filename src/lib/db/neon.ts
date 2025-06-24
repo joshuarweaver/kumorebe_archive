@@ -1,8 +1,15 @@
 import { neon } from '@neondatabase/serverless';
-import { env } from '@/config/env';
+import { env } from '@/src/config/env';
 
 export const sql = neon(env.DATABASE_URL);
 export const sqlUnpooled = neon(env.DATABASE_URL_UNPOOLED);
+
+export function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
 
 export async function createTables() {
   await sql`

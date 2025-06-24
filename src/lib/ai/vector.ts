@@ -1,5 +1,5 @@
 import { Index } from '@upstash/vector';
-import { env } from '@/config/env';
+import { env } from '@/src/config/env';
 
 export const vectorIndex = new Index({
   url: env.UPSTASH_VECTOR_REST_URL,

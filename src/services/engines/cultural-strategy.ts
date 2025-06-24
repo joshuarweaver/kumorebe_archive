@@ -1,8 +1,8 @@
-import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
-import { getCachedData, setCachedData, CACHE_KEYS, CACHE_TTL } from '@/lib/cache/redis';
-import { generateEmbedding } from '@/lib/ai/deepinfra';
-import { upsertVector } from '@/lib/ai/vector';
-import { CulturalInsight } from '@/types/campaign';
+import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
+import { getCachedData, setCachedData, CACHE_KEYS, CACHE_TTL } from '@/src/lib/cache/redis';
+import { generateEmbedding } from '@/src/lib/ai/deepinfra';
+import { upsertVector } from '@/src/lib/ai/vector';
+import { CulturalInsight } from '@/src/types/campaign';
 
 export class CulturalStrategyEngine {
   async analyzeCulturalTensions(

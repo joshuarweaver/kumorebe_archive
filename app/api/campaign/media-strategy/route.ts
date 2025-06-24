@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
+import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
 import { z } from 'zod';
 
 const mediaRequestSchema = z.object({

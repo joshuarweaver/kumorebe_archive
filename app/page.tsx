@@ -10,10 +10,9 @@ const defaultExamples = [
 ];
 
 export default function Home() {
-  const [phase, setPhase] = useState<'input' | 'loading' | 'result'>('input');
+  const [phase, setPhase] = useState<'input' | 'loading'>('input');
   const [input, setInput] = useState('');
   const [placeholder, setPlaceholder] = useState('');
-  const [campaign, setCampaign] = useState<any>(null);
   const [showOverlay, setShowOverlay] = useState(false);
   const [examples, setExamples] = useState(defaultExamples);
   const [taglineWord, setTaglineWord] = useState('brand');
@@ -93,19 +92,17 @@ export default function Home() {
     
     setPhase('loading');
     
-    // Parse the input to extract campaign details
-    const brandMatch = input.match(/(?:for|by|@)\s+(\w+)/i);
-    const brandName = brandMatch ? brandMatch[1] : 'Disruptor';
-    
+    // Use the full input as the campaign brief
     const payload = {
-      brandId: `brand-${Date.now()}`,
-      brandName,
+      brandId: `campaign-${Date.now()}`,
+      brandName: 'Campaign Brief', // Generic name since it's an open prompt
+      campaignBrief: input, // Send the full input to the API
       industry: detectIndustry(input),
-      targetAudience: "Culture creators and change makers",
-      objectives: ["Create cultural disruption", "Build authentic community", "Drive systemic change"],
-      brandValues: ["Radical honesty", "Bold action", "Authentic rebellion"],
-      brandArchetype: "rebel",
-      riskTolerance: "high"
+      targetAudience: extractTargetAudience(input),
+      objectives: extractObjectives(input),
+      brandValues: extractBrandValues(input),
+      brandArchetype: extractArchetype(input),
+      riskTolerance: extractRiskTolerance(input)
     };
     
     try {
@@ -117,8 +114,11 @@ export default function Home() {
       
       const data = await response.json();
       if (data.success) {
-        setCampaign(data.campaign);
-        setPhase('result');
+        // Redirect to the campaign page using the slug or ID
+        const campaignUrl = data.campaignSlug 
+          ? `/campaign/${data.campaignSlug}`
+          : `/campaign/${data.campaignId}`;
+        window.location.href = campaignUrl;
       }
     } catch (error) {
       console.error('Error:', error);
@@ -144,56 +144,98 @@ export default function Home() {
     }
     return 'consumer';
   };
+
+
+  const extractTargetAudience = (text: string): string => {
+    const lowercaseText = text.toLowerCase();
+    
+    if (lowercaseText.includes('gen z')) return 'Gen Z digital natives';
+    if (lowercaseText.includes('millennial')) return 'Millennials seeking authenticity';
+    if (lowercaseText.includes('professional')) return 'Young professionals';
+    if (lowercaseText.includes('creator')) return 'Content creators and influencers';
+    if (lowercaseText.includes('activist')) return 'Social activists and change makers';
+    
+    return 'Culture creators and conscious consumers';
+  };
+
+  const extractObjectives = (text: string): string[] => {
+    const objectives = [];
+    const lowercaseText = text.toLowerCase();
+    
+    if (lowercaseText.includes('awareness') || lowercaseText.includes('brand')) {
+      objectives.push('Increase brand awareness');
+    }
+    if (lowercaseText.includes('community') || lowercaseText.includes('social')) {
+      objectives.push('Build authentic community');
+    }
+    if (lowercaseText.includes('change') || lowercaseText.includes('disrupt')) {
+      objectives.push('Drive cultural change');
+    }
+    if (lowercaseText.includes('engagement') || lowercaseText.includes('participate')) {
+      objectives.push('Maximize engagement');
+    }
+    
+    return objectives.length > 0 ? objectives : ['Create cultural impact', 'Build engaged community'];
+  };
+
+  const extractBrandValues = (text: string): string[] => {
+    const values = [];
+    const lowercaseText = text.toLowerCase();
+    
+    if (lowercaseText.includes('authentic') || lowercaseText.includes('real')) {
+      values.push('Authenticity');
+    }
+    if (lowercaseText.includes('sustainable') || lowercaseText.includes('environment')) {
+      values.push('Sustainability');
+    }
+    if (lowercaseText.includes('transparent') || lowercaseText.includes('honest')) {
+      values.push('Transparency');
+    }
+    if (lowercaseText.includes('innovation') || lowercaseText.includes('creative')) {
+      values.push('Innovation');
+    }
+    if (lowercaseText.includes('community') || lowercaseText.includes('together')) {
+      values.push('Community');
+    }
+    
+    return values.length > 0 ? values : ['Authenticity', 'Innovation', 'Community'];
+  };
+
+  const extractArchetype = (text: string): string => {
+    const lowercaseText = text.toLowerCase();
+    
+    if (lowercaseText.includes('disrupt') || lowercaseText.includes('challenge') || lowercaseText.includes('break')) {
+      return 'rebel';
+    }
+    if (lowercaseText.includes('help') || lowercaseText.includes('solve') || lowercaseText.includes('support')) {
+      return 'caregiver';
+    }
+    if (lowercaseText.includes('create') || lowercaseText.includes('build') || lowercaseText.includes('make')) {
+      return 'creator';
+    }
+    if (lowercaseText.includes('explore') || lowercaseText.includes('discover') || lowercaseText.includes('adventure')) {
+      return 'explorer';
+    }
+    if (lowercaseText.includes('lead') || lowercaseText.includes('inspire') || lowercaseText.includes('empower')) {
+      return 'hero';
+    }
+    
+    return 'creator';
+  };
+
+  const extractRiskTolerance = (text: string): 'low' | 'medium' | 'high' => {
+    const lowercaseText = text.toLowerCase();
+    
+    if (lowercaseText.includes('bold') || lowercaseText.includes('radical') || lowercaseText.includes('revolutionary')) {
+      return 'high';
+    }
+    if (lowercaseText.includes('safe') || lowercaseText.includes('traditional') || lowercaseText.includes('conservative')) {
+      return 'low';
+    }
+    
+    return 'medium';
+  };
   
-  if (phase === 'result' && campaign) {
-    return (
-      <main className="min-h-screen bg-black text-white">
-        <div className="absolute top-8 right-8">
-          <h1 className="text-xl font-chillax font-medium">kumorebe</h1>
-        </div>
-        
-        <div className="max-w-4xl mx-auto px-8 py-24">
-          <div className="mb-16">
-            <h2 className="text-6xl font-light mb-4">{campaign.summary?.campaignName || 'Untitled Campaign'}</h2>
-            <p className="text-2xl text-neutral-500">{campaign.summary?.tagline || ''}</p>
-          </div>
-          
-          <div className="space-y-12">
-            <div>
-              <h3 className="text-sm uppercase tracking-wider text-neutral-600 mb-3">The Idea</h3>
-              <p className="text-xl leading-relaxed">{campaign.summary?.bigIdea || ''}</p>
-            </div>
-            
-            <div>
-              <h3 className="text-sm uppercase tracking-wider text-neutral-600 mb-3">The Audience</h3>
-              <p className="text-lg text-neutral-300">{campaign.audience?.primaryPersona?.psychographics || ''}</p>
-            </div>
-            
-            <div>
-              <h3 className="text-sm uppercase tracking-wider text-neutral-600 mb-3">The Impact</h3>
-              <p className="text-lg text-neutral-300">{campaign.kpis?.northStarMetric?.metric || ''}: <span className="text-white">{campaign.kpis?.northStarMetric?.target || ''}</span></p>
-            </div>
-            
-            <div>
-              <h3 className="text-sm uppercase tracking-wider text-neutral-600 mb-3">The Execution</h3>
-              <p className="text-lg text-neutral-300">{campaign.creative?.heroConcept?.narrative || ''}</p>
-            </div>
-          </div>
-          
-          <button
-            onClick={() => {
-              setPhase('input');
-              setCampaign(null);
-              setInput('');
-            }}
-            className="mt-20 text-neutral-500 hover:text-white transition-colors"
-          >
-            create another →
-          </button>
-        </div>
-      </main>
-    );
-  }
   
   if (phase === 'loading') {
     return (
@@ -235,7 +277,7 @@ export default function Home() {
             autoComplete="off"
             spellCheck={false}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && e.metaKey) {
+              if (e.key === 'Enter') {
                 e.preventDefault();
                 handleSubmit(e);
               }
@@ -244,7 +286,12 @@ export default function Home() {
           
           <div className="mt-6 flex justify-between items-center">
             <span className="text-sm text-neutral-600">{input.length} / 2100</span>
-            <span className="text-sm text-neutral-500">press cmd+enter →</span>
+            <button 
+              type="submit"
+              className="text-sm text-neutral-500 hover:text-white transition-colors cursor-pointer"
+            >
+              press enter ↵
+            </button>
           </div>
           
           <div className="flex gap-4 mt-8">

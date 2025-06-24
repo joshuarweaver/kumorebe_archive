@@ -1,7 +1,7 @@
-import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
-import { ConventionViolation } from '@/types/campaign';
-import { generateEmbedding } from '@/lib/ai/deepinfra';
-import { upsertVector } from '@/lib/ai/vector';
+import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
+import { ConventionViolation } from '@/src/types/campaign';
+import { generateEmbedding } from '@/src/lib/ai/deepinfra';
+import { upsertVector } from '@/src/lib/ai/vector';
 
 export interface IndustryConvention {
   convention: string;

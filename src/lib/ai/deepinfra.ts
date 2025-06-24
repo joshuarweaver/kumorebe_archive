@@ -1,4 +1,4 @@
-import { env } from '@/config/env';
+import { env } from '@/src/config/env';
 
 const DEEPINFRA_API_URL = 'https://api.deepinfra.com/v1/openai';
 

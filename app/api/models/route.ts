@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { callDeepInfra, DEEPINFRA_MODELS } from '@/lib/ai/deepinfra';
-import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
+import { callDeepInfra, DEEPINFRA_MODELS } from '@/src/lib/ai/deepinfra';
+import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
 import { ModelTask, ModelResponse } from '@/types/models';
-import { getCachedData, setCachedData, CACHE_KEYS, CACHE_TTL } from '@/lib/cache/redis';
+import { getCachedData, setCachedData, CACHE_KEYS, CACHE_TTL } from '@/src/lib/cache/redis';
 
 export async function POST(request: NextRequest) {
   try {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
+import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
 import { z } from 'zod';
 
 const kpiRequestSchema = z.object({
@@ -10,6 +10,19 @@ const kpiRequestSchema = z.object({
   bigIdea: z.string(),
 });
 
+const kpiSchema = z.object({
+  name: z.string(),
+  definition: z.string(),
+  current: z.number(),
+  target: z.number(),
+  benchmark: z.number(),
+  unit: z.string(),
+  category: z.enum(['awareness', 'engagement', 'conversion', 'loyalty']),
+  importance: z.enum(['critical', 'high', 'medium']),
+  trend: z.enum(['up', 'down', 'stable']),
+  description: z.string(),
+});
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -17,44 +30,43 @@ export async function POST(request: NextRequest) {
     
     const systemPrompt = `You are a performance strategist setting KPIs and success metrics for a breakthrough campaign.
 
-Create comprehensive measurement framework including:
+Create a comprehensive measurement framework with EXACTLY this JSON structure:
 
-1. NORTH STAR METRIC:
-   - The ONE metric that matters most
-   - Why it captures campaign success
-   - Target number with rationale
+{
+  "northStarMetric": {
+    "name": "Metric Name",
+    "value": 0,
+    "target": 100,
+    "description": "Why this metric matters most"
+  },
+  "kpis": [
+    {
+      "name": "KPI Name",
+      "definition": "Clear definition of what this measures",
+      "current": 0,
+      "target": 50,
+      "benchmark": 25,
+      "unit": "%",
+      "category": "awareness|engagement|conversion|loyalty",
+      "importance": "critical|high|medium",
+      "trend": "up|down|stable",
+      "description": "Strategic importance and measurement approach"
+    }
+  ],
+  "successCriteria": {
+    "minimum": ["Criteria 1", "Criteria 2", "Criteria 3"],
+    "target": ["Criteria 1", "Criteria 2", "Criteria 3"],
+    "breakthrough": ["Criteria 1", "Criteria 2", "Criteria 3"]
+  },
+  "measurementPlan": {
+    "prelaunch": "Benchmark collection approach",
+    "realtime": "Live tracking methodology",
+    "optimization": "Weekly optimization triggers",
+    "postCampaign": "Analysis and learning plan"
+  }
+}
 
-2. PRIMARY KPIs (3-5):
-   - Specific, measurable metrics
-   - Baseline → Target with % increase
-   - Measurement methodology
-   - Reporting cadence
-
-3. ENGAGEMENT METRICS:
-   - Participation rate
-   - Virality coefficient
-   - Share of voice
-   - Sentiment analysis targets
-
-4. CULTURAL IMPACT METRICS:
-   - Media coverage targets
-   - Influencer engagement
-   - Meme creation/spread
-   - Cultural conversation share
-
-5. BUSINESS OUTCOMES:
-   - Revenue impact
-   - Customer acquisition
-   - Brand lift metrics
-   - Market share goals
-
-6. MEASUREMENT PLAN:
-   - Pre-campaign benchmarks needed
-   - Real-time tracking dashboard
-   - Weekly optimization triggers
-   - Post-campaign analysis
-
-Be specific with numbers, percentages, and timelines. Make metrics ambitious but achievable.`;
+Create 4 comprehensive KPIs covering awareness, engagement, conversion, and loyalty. Use realistic industry benchmarks and ambitious but achievable targets.`;
 
     const userPrompt = `Campaign: ${validatedRequest.campaignName}
 Big Idea: ${validatedRequest.bigIdea}
@@ -70,23 +82,76 @@ Set ambitious but achievable KPIs that will prove this campaign's breakthrough s
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt }
       ],
-      { temperature: 0.7, max_tokens: 2000 }
+      { temperature: 0.7, max_tokens: 2500 }
     );
 
-    const content = response.choices[0]?.message?.content || '';
+    const content = response.choices[0]?.message?.content || '{}';
     
-    return NextResponse.json({
-      success: true,
-      kpis: {
-        fullFramework: content,
-        northStarMetric: extractNorthStar(content),
-        primaryKPIs: extractPrimaryKPIs(content),
-        engagementMetrics: extractEngagementMetrics(content),
-        culturalImpactMetrics: extractCulturalMetrics(content),
-        businessOutcomes: extractBusinessOutcomes(content),
-        measurementPlan: extractMeasurementPlan(content),
-      }
-    });
+    try {
+      const parsedContent = JSON.parse(content);
+      
+      // Validate KPIs if they exist
+      const validatedKPIs = parsedContent.kpis?.map((kpi: any) => {
+        try {
+          return kpiSchema.parse(kpi);
+        } catch (e) {
+          // Return a default structure if parsing fails
+          return {
+            name: kpi.name || 'Key Metric',
+            definition: kpi.definition || 'Important campaign metric',
+            current: kpi.current || 0,
+            target: kpi.target || 50,
+            benchmark: kpi.benchmark || 25,
+            unit: kpi.unit || '%',
+            category: kpi.category || 'engagement',
+            importance: kpi.importance || 'high',
+            trend: kpi.trend || 'stable',
+            description: kpi.description || 'Measures campaign effectiveness'
+          };
+        }
+      }) || [];
+      
+      return NextResponse.json({
+        success: true,
+        kpis: {
+          northStarMetric: parsedContent.northStarMetric || {
+            name: 'Campaign Participation Rate',
+            value: 0,
+            target: 100,
+            description: 'Percentage of target audience actively engaging with campaign'
+          },
+          kpis: validatedKPIs,
+          successCriteria: parsedContent.successCriteria || {
+            minimum: ['Meet 80% of KPI targets', 'Exceed industry benchmarks', 'Positive sentiment > 70%'],
+            target: ['Achieve 100% of KPI targets', '25% above benchmarks', 'Viral coefficient > 1.5'],
+            breakthrough: ['Exceed targets by 20%+', 'Category-leading metrics', 'Cultural moment creation']
+          },
+          measurementPlan: parsedContent.measurementPlan || {
+            prelaunch: 'Collect baseline metrics through surveys and social listening',
+            realtime: 'Dashboard tracking engagement, reach, and sentiment hourly',
+            optimization: 'Weekly reviews with trigger-based adjustments',
+            postCampaign: 'Comprehensive analysis with learnings documentation'
+          },
+          fullFramework: content
+        }
+      });
+    } catch (parseError) {
+      // Fallback to text extraction if JSON parsing fails
+      return NextResponse.json({
+        success: true,
+        kpis: {
+          northStarMetric: extractNorthStar(content),
+          kpis: [],
+          successCriteria: {
+            minimum: ['Meet core objectives', 'Positive ROI', 'Brand lift'],
+            target: ['Exceed all KPIs', 'Strong viral growth', 'Category leadership'],
+            breakthrough: ['Cultural phenomenon', 'Industry disruption', 'Lasting impact']
+          },
+          measurementPlan: extractMeasurementPlan(content),
+          fullFramework: content
+        }
+      });
+    }
   } catch (error) {
     console.error('KPI generation error:', error);
     return NextResponse.json(

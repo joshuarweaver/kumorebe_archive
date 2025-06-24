@@ -1,4 +1,4 @@
-import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
+import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
 import { ModelOrchestrator } from '../orchestration/model-orchestrator';
 
 export interface StrategicFramework {

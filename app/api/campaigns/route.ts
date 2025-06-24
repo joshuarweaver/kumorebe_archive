@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@/lib/db/neon';
-import { generateEmbedding } from '@/lib/ai/deepinfra';
-import { upsertVector } from '@/lib/ai/vector';
+import { sql } from '@/src/lib/db/neon';
+import { generateEmbedding } from '@/src/lib/ai/deepinfra';
+import { upsertVector } from '@/src/lib/ai/vector';
 import { Campaign } from '@/types/campaign';
 
 export async function POST(request: NextRequest) {

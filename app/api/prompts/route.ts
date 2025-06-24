@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
+import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
 
 export async function GET() {
   try {
@@ -11,9 +11,11 @@ Rules:
 - Include specific details: brand concept, target audience, and solution
 - Address real cultural tensions and opportunities
 - Cover diverse industries
+- NEVER use actual brand names - use generic descriptive terms instead
+- Focus on category disruption rather than specific companies
 
 Example of GOOD prompt:
-"Build a mental health app for Gen Z that gamifies therapy sessions and creates viral challenges around emotional vulnerability to destigmatize seeking help"
+"Build a wellness platform that gamifies therapy sessions and creates viral challenges around emotional vulnerability to destigmatize seeking help"
 
 Example of BAD prompt:
 "Create a campaign that challenges the status quo..."
@@ -52,10 +54,10 @@ Return a JSON array of 10 complete prompts.`;
     
     // High-quality fallback prompts
     const fallbackPrompts = [
-      "Launch a mental health app that makes therapy cool for Gen Z by gamifying emotional growth and creating viral TikTok challenges around vulnerability and self-care",
+      "Launch a wellness platform that makes therapy cool for Gen Z by gamifying emotional growth and creating viral challenges around vulnerability and self-care",
       "Build a sustainable fashion marketplace that exposes fast fashion's environmental crimes while making second-hand luxury more desirable than buying new",
       "Create a fintech platform for millennials that shows exactly how banks exploit them and offers transparent wealth-building tools with zero hidden fees",
-      "Develop a food delivery app that connects directly with local farms, shows the carbon footprint of every meal, and makes sustainable eating a status symbol",
+      "Develop a food delivery service that connects directly with local farms, shows the carbon footprint of every meal, and makes sustainable eating a status symbol",
       "Transform online dating by matching people based on their activism and social impact goals rather than superficial swipes and filtered photos",
       "Disrupt corporate education with a peer-to-peer platform where industry rebels teach real skills that universities ignore while building anti-establishment credibility",
       "Launch a beauty brand that uses AR to show unfiltered reality, celebrates authentic flaws, and exposes how traditional beauty marketing manipulates insecurities",
@@ -72,7 +74,7 @@ Return a JSON array of 10 complete prompts.`;
     // Return quality fallbacks on error
     return NextResponse.json({ 
       prompts: [
-        "Launch a mental health app that makes therapy cool for Gen Z by gamifying emotional growth and creating viral TikTok challenges around vulnerability",
+        "Launch a wellness platform that makes therapy cool for Gen Z by gamifying emotional growth and creating viral challenges around vulnerability",
         "Build a sustainable fashion marketplace that exposes fast fashion's true costs while making second-hand luxury more desirable than buying new",
         "Create a fintech platform that shows exactly how banks exploit young people and offers transparent alternatives for building generational wealth"
       ]

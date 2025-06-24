@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { analyzeRealTimeTrends } from '@/lib/ai/groq';
-import { generateEmbedding } from '@/lib/ai/deepinfra';
-import { upsertVector, queryVectors } from '@/lib/ai/vector';
-import { getCachedData, setCachedData, CACHE_KEYS, CACHE_TTL } from '@/lib/cache/redis';
-import { sql } from '@/lib/db/neon';
+import { analyzeRealTimeTrends } from '@/src/lib/ai/groq';
+import { generateEmbedding } from '@/src/lib/ai/deepinfra';
+import { upsertVector, queryVectors } from '@/src/lib/ai/vector';
+import { getCachedData, setCachedData, CACHE_KEYS, CACHE_TTL } from '@/src/lib/cache/redis';
+import { sql } from '@/src/lib/db/neon';
 
 export async function POST(request: NextRequest) {
   try {

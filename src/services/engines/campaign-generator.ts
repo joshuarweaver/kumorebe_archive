@@ -1,13 +1,13 @@
-import { Campaign, CulturalInsight, ConventionViolation, ParticipationArchitecture } from '@/types/campaign';
+import { Campaign, CulturalInsight, ConventionViolation, ParticipationArchitecture } from '@/src/types/campaign';
 import { CulturalStrategyEngine } from './cultural-strategy';
 import { RealTimeTrendEngine } from './real-time-trend';
 import { StrategicFrameworkEngine } from './strategic-framework';
 import { ConventionViolationEngine } from './convention-violation';
 import { ModelOrchestrator } from '../orchestration/model-orchestrator';
-import { callGroq, GROQ_MODELS } from '@/lib/ai/groq';
-import { generateEmbedding } from '@/lib/ai/deepinfra';
-import { sql } from '@/lib/db/neon';
-import { upsertVector } from '@/lib/ai/vector';
+import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
+import { generateEmbedding } from '@/src/lib/ai/deepinfra';
+import { sql } from '@/src/lib/db/neon';
+import { upsertVector } from '@/src/lib/ai/vector';
 import { randomUUID } from 'crypto';
 
 export interface CampaignGenerationRequest {

@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { CulturalStrategyEngine } from '@/services/engines/cultural-strategy';
-import { ConventionViolationEngine } from '@/services/engines/convention-violation';
+import { CulturalStrategyEngine } from '@/src/services/engines/cultural-strategy';
+import { ConventionViolationEngine } from '@/src/services/engines/convention-violation';
 import { randomUUID } from 'crypto';
 
 const campaignRequestSchema = z.object({
   brandId: z.string(),
   brandName: z.string(),
+  campaignBrief: z.string().optional(), // Full campaign brief from user
   industry: z.string(),
   targetAudience: z.string(),
   objectives: z.array(z.string()),
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedRequest = campaignRequestSchema.parse(body);
     
-    console.log('Starting campaign generation for:', validatedRequest.brandName);
+    console.log('Starting campaign generation with brief:', validatedRequest.campaignBrief || 'No brief provided');
     
     // Phase 1: Cultural Analysis (optional, for context)
     let culturalInsights, conventionViolations;
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ...validatedRequest,
+        campaignBrief: validatedRequest.campaignBrief,
         culturalInsights,
         conventionViolations
       })
@@ -138,9 +140,39 @@ export async function POST(request: NextRequest) {
       }
     };
     
+    // Store campaign in database
+    const storeCampaignResponse = await fetch(`${baseUrl}s/${campaignId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        brand_id: validatedRequest.brandId,
+        brand_name: summaryData.summary.campaignName || 'Campaign',
+        industry: validatedRequest.industry,
+        campaign_name: summaryData.summary.campaignName,
+        tagline: summaryData.summary.tagline,
+        big_idea: summaryData.summary.bigIdea,
+        strategic_rationale: summaryData.summary.strategicRationale,
+        expected_impact: summaryData.summary.expectedImpact,
+        target_audience: validatedRequest.targetAudience,
+        objectives: validatedRequest.objectives,
+        brand_values: validatedRequest.brandValues,
+        brand_archetype: validatedRequest.brandArchetype,
+        risk_tolerance: validatedRequest.riskTolerance,
+        summary_data: summaryData.summary,
+        audience_data: audienceData.audience,
+        kpi_data: kpiData.kpis,
+        media_strategy_data: mediaData.mediaStrategy,
+        creative_data: creativeData.creative
+      })
+    });
+    
+    const storeResult = await storeCampaignResponse.json();
+    
     return NextResponse.json({
       success: true,
       campaign,
+      campaignId: storeResult.id,
+      campaignSlug: storeResult.slug,
       message: 'Full campaign generated successfully',
     });
     

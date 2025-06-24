@@ -1,7 +1,7 @@
-import { analyzeRealTimeTrends, callGroq, GROQ_MODELS } from '@/lib/ai/groq';
-import { generateEmbedding } from '@/lib/ai/deepinfra';
-import { upsertVector, queryVectors } from '@/lib/ai/vector';
-import { getCachedData, setCachedData, CACHE_KEYS, CACHE_TTL } from '@/lib/cache/redis';
+import { analyzeRealTimeTrends, callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
+import { generateEmbedding } from '@/src/lib/ai/deepinfra';
+import { upsertVector, queryVectors } from '@/src/lib/ai/vector';
+import { getCachedData, setCachedData, CACHE_KEYS, CACHE_TTL } from '@/src/lib/cache/redis';
 
 export interface TrendInsight {
   trend: string;

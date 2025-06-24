@@ -1,5 +1,5 @@
 import { Redis } from '@upstash/redis';
-import { env } from '@/config/env';
+import { env } from '@/src/config/env';
 
 export const redis = new Redis({
   url: env.KV_REST_API_URL,
