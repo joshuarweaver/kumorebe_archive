@@ -110,7 +110,7 @@ export default function CampaignOverview({ campaign }: CampaignOverviewProps) {
       </div>
 
       <div className="bg-neutral-900/50 p-8 rounded-2xl border border-neutral-800">
-        <h3 className="text-xl font-medium mb-6 text-purple-400">North Star Metric</h3>
+        <h3 className="text-xl font-medium mb-6 text-purple-400">Cultural Impact Score</h3>
         <div className="h-64">
           <Doughnut 
             data={{
@@ -126,7 +126,8 @@ export default function CampaignOverview({ campaign }: CampaignOverviewProps) {
         </div>
         <div className="text-center mt-4">
           <p className="text-2xl font-bold text-green-400">65%</p>
-          <p className="text-sm text-neutral-400">{northStarMetric}</p>
+          <p className="text-sm text-neutral-400">Current Performance</p>
+          <p className="text-xs text-neutral-500 mt-2">Measures campaign's ability to shift cultural conversations and create lasting brand impact</p>
         </div>
       </div>
     </div>

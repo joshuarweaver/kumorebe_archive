@@ -1,11 +1,20 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Line } from 'react-chartjs-2';
 import styles from './EnhancedConsumerJourney.module.css';
+import { ChartContainer, ChartTooltip } from './ui/chart';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from 'recharts';
 import {
   ReactFlow,
-  MiniMap,
   Controls,
   Background,
   useNodesState,
@@ -42,28 +51,6 @@ import {
   FileText,
   Megaphone
 } from 'lucide-react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-} from 'chart.js';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
 
 interface JourneyStage {
   name: string;
@@ -83,10 +70,10 @@ interface JourneyStage {
 // Custom node component for the flow chart
 const CustomNode = ({ data }: { data: any }) => {
   return (
-    <div className={`px-4 py-3 rounded-lg border-2 ${data.color} bg-neutral-900 min-w-[200px]`}>
+    <div className={`px-4 py-3 rounded-xl border-2 ${data.color} bg-gradient-to-br from-neutral-900 to-neutral-800/50 backdrop-blur-sm min-w-[200px] shadow-lg hover:shadow-xl transition-all`}>
       <Handle type="target" position={Position.Top} className="!bg-green-500" />
       <div className="flex items-center gap-2 mb-2">
-        <div className={`p-2 rounded ${data.iconBg}`}>
+        <div className={`p-2 rounded-lg ${data.iconBg} backdrop-blur-sm`}>
           {data.icon}
         </div>
         <div>
@@ -327,28 +314,14 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
 
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [funnelData, setFunnelData] = useState({
-    labels: journeyStages.map(stage => stage.name),
-    datasets: [
-      {
-        label: 'Conversion Funnel',
-        data: journeyStages.map(stage => stage.metrics.conversionRate),
-        borderColor: 'rgb(34, 197, 94)',
-        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-        fill: true,
-        tension: 0.3,
-      },
-      {
-        label: 'Industry Benchmark',
-        data: [100, 65, 35, 20, 10],
-        borderColor: 'rgb(156, 163, 175)',
-        backgroundColor: 'rgba(156, 163, 175, 0.1)',
-        borderDash: [5, 5],
-        fill: false,
-        tension: 0.3,
-      }
-    ],
-  });
+  const [funnelData, setFunnelData] = useState(
+    journeyStages.map((stage, index) => ({
+      name: stage.name,
+      conversion: stage.metrics.conversionRate,
+      benchmark: [100, 65, 35, 20, 10][index],
+      users: (stage.metrics.volume / 1000).toFixed(0) + 'K',
+    }))
+  );
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -399,63 +372,18 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
   // Update funnel data when touchpoints are added
   const updateFunnelData = (stageIndex: number, improvement: number) => {
     setFunnelData(prevData => {
-      const newData = { ...prevData };
-      const currentData = [...newData.datasets[0].data];
+      const newData = [...prevData];
       
       // Improve conversion rates for this stage and subsequent stages
-      for (let i = stageIndex; i < currentData.length; i++) {
-        currentData[i] = Math.min(100, currentData[i] + improvement * (1 - (i - stageIndex) * 0.2));
+      for (let i = stageIndex; i < newData.length; i++) {
+        newData[i] = {
+          ...newData[i],
+          conversion: Math.min(100, newData[i].conversion + improvement * (1 - (i - stageIndex) * 0.2))
+        };
       }
       
-      newData.datasets[0].data = currentData;
       return newData;
     });
-  };
-
-
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        display: true,
-        position: 'top' as const,
-        labels: {
-          color: '#999',
-        },
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        padding: 12,
-        titleColor: '#fff',
-        bodyColor: '#999',
-        borderColor: '#333',
-        borderWidth: 1,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 100,
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)',
-        },
-        ticks: {
-          color: '#999',
-          callback: function(value: any) {
-            return value + '%';
-          },
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-        ticks: {
-          color: '#999',
-        },
-      },
-    },
   };
 
   return (
@@ -469,13 +397,75 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
       </div>
 
       {/* Funnel Chart */}
-      <div className="bg-neutral-900 rounded-xl p-6 border border-neutral-800">
+      <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-8 border border-neutral-800 hover:border-neutral-700 transition-all shadow-xl hover:shadow-2xl">
         <h3 className="text-xl font-medium mb-6 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-green-400" />
           Conversion Funnel Analysis
         </h3>
-        <div className="h-80">
-          <Line options={chartOptions} data={funnelData} />
+        <div className="h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={funnelData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+              <defs>
+                <linearGradient id="colorConversion" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorBenchmark" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#6b7280" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#6b7280" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+              <XAxis 
+                dataKey="name" 
+                tick={{ fill: '#999' }}
+                axisLine={{ stroke: '#444' }}
+              />
+              <YAxis 
+                tick={{ fill: '#999' }}
+                axisLine={{ stroke: '#444' }}
+                domain={[0, 100]}
+                tickFormatter={(value) => `${value}%`}
+              />
+              <Tooltip 
+                content={<ChartTooltip formatter={(value: any) => `${value}%`} />} 
+                cursor={{ fill: 'rgba(255, 255, 255, 0.02)' }}
+              />
+              <Legend 
+                wrapperStyle={{ paddingTop: '20px' }}
+                iconType="line"
+                formatter={(value) => <span style={{ color: '#999' }}>{value}</span>}
+              />
+              <Area
+                type="monotone"
+                dataKey="benchmark"
+                name="Industry Benchmark"
+                stroke="#6b7280"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#colorBenchmark)"
+                strokeDasharray="5 5"
+              />
+              <Area
+                type="monotone"
+                dataKey="conversion"
+                name="Conversion Funnel"
+                stroke="#22c55e"
+                strokeWidth={3}
+                fillOpacity={1}
+                fill="url(#colorConversion)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="mt-6 grid grid-cols-5 gap-2">
+          {funnelData.map((stage, index) => (
+            <div key={index} className="text-center">
+              <p className="text-xs text-neutral-500 mb-1">{stage.name}</p>
+              <p className="text-lg font-light text-green-400">{stage.conversion}%</p>
+              <p className="text-xs text-neutral-600">{stage.users} users</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -516,8 +506,8 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
       </div>
 
       {/* Flow Chart */}
-      <div className="bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden">
-        <div className="p-4 border-b border-neutral-800">
+      <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl border border-neutral-800 overflow-hidden shadow-xl hover:shadow-2xl transition-all">
+        <div className="p-6 border-b border-neutral-800">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-medium flex items-center gap-2">
@@ -530,7 +520,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
             </div>
             <button
               onClick={() => setShowAddMenu(!showAddMenu)}
-              className="px-4 py-2 bg-green-500 text-black rounded-lg hover:bg-green-400 transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-black rounded-lg hover:from-green-400 hover:to-green-500 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Add Touchpoint
@@ -539,7 +529,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
           
           {/* Add Touchpoint Menu */}
           {showAddMenu && (
-            <div className="mt-4 p-4 bg-neutral-800 rounded-lg">
+            <div className="mt-4 p-4 bg-neutral-800/50 backdrop-blur-sm rounded-lg border border-neutral-700">
               <p className="text-sm text-neutral-400 mb-3">Select a stage, then choose a touchpoint to add:</p>
               <div className="grid grid-cols-5 gap-2 mb-4">
                 {journeyStages.map((stage, index) => (
@@ -582,14 +572,9 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
             onConnect={onConnect}
             nodeTypes={nodeTypes}
             fitView
-            className="bg-neutral-950"
+            className="bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950"
           >
-            <Controls className="!bg-neutral-800 !border-neutral-700" />
-            <MiniMap 
-              className="!bg-neutral-800 !border-neutral-700" 
-              nodeColor="#22c55e"
-              maskColor="rgba(0, 0, 0, 0.8)"
-            />
+            <Controls className="!bg-neutral-800/80 !backdrop-blur-sm !border-neutral-700 !shadow-xl" />
             <Background variant="dots" gap={16} size={1} color="#333" />
           </ReactFlow>
         </div>
@@ -597,21 +582,21 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
 
       {/* Journey Insights */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-r from-green-500/10 to-green-600/10 rounded-xl p-4 border border-green-500/30">
+        <div className="bg-gradient-to-br from-green-500/20 via-green-600/10 to-transparent rounded-xl p-6 border border-green-500/30 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all">
           <CheckCircle2 className="w-5 h-5 text-green-400 mb-2" />
           <h4 className="font-medium mb-1">Strong Performance</h4>
           <p className="text-sm text-neutral-400">
             Interest to Consideration conversion exceeds industry benchmark by 25%
           </p>
         </div>
-        <div className="bg-gradient-to-r from-yellow-500/10 to-yellow-600/10 rounded-xl p-4 border border-yellow-500/30">
+        <div className="bg-gradient-to-br from-yellow-500/20 via-yellow-600/10 to-transparent rounded-xl p-6 border border-yellow-500/30 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all">
           <AlertCircle className="w-5 h-5 text-yellow-400 mb-2" />
           <h4 className="font-medium mb-1">Optimization Opportunity</h4>
           <p className="text-sm text-neutral-400">
             Consideration to Action drop-off can be improved with better nurturing
           </p>
         </div>
-        <div className="bg-gradient-to-r from-blue-500/10 to-blue-600/10 rounded-xl p-4 border border-blue-500/30">
+        <div className="bg-gradient-to-br from-blue-500/20 via-blue-600/10 to-transparent rounded-xl p-6 border border-blue-500/30 backdrop-blur-sm shadow-lg hover:shadow-xl transition-all">
           <TrendingUp className="w-5 h-5 text-blue-400 mb-2" />
           <h4 className="font-medium mb-1">Growth Potential</h4>
           <p className="text-sm text-neutral-400">

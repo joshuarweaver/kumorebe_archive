@@ -1,40 +1,40 @@
 'use client';
 
-import { TrendingUp, Target, BarChart3, Activity, Award, AlertCircle, CheckCircle2, Info } from 'lucide-react';
-import { Bar, Line } from 'react-chartjs-2';
+import { TrendingUp, Target, BarChart3, Activity, Award, Info, ArrowUp, Milestone, Flag } from 'lucide-react';
+import { formatMetricValue, detectMetricFormat } from './utils/formatting';
+import { ChartContainer, ChartTooltip } from './ui/chart';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Title,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
   Tooltip,
-  Legend,
-} from 'chart.js';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  LineElement,
-  PointElement,
-  Title,
-  Tooltip,
-  Legend
-);
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  Area,
+  AreaChart,
+  CartesianGrid,
+} from 'recharts';
 
 interface KPI {
   name: string;
   definition: string;
-  current: number;
   target: number;
   benchmark: number;
   unit: string;
   category: 'awareness' | 'engagement' | 'conversion' | 'loyalty';
   importance: 'critical' | 'high' | 'medium';
-  trend: 'up' | 'down' | 'stable';
+  description: string;
+}
+
+interface Milestone {
+  name: string;
+  target: number;
+  timeframe: string;
   description: string;
 }
 
@@ -54,117 +54,160 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
     {
       name: "Brand Awareness Lift",
       definition: "Percentage increase in unaided brand recall among target audience",
-      current: 23,
       target: 35,
       benchmark: 18,
       unit: "%",
       category: "awareness",
       importance: "critical",
-      trend: "up",
       description: "Measures top-of-mind brand presence in category consideration set"
     },
     {
       name: "Engagement Rate",
       definition: "Average interaction rate across all campaign touchpoints",
-      current: 8.7,
       target: 12,
       benchmark: 4.5,
       unit: "%",
       category: "engagement",
       importance: "high",
-      trend: "up",
       description: "Indicates content resonance and audience participation quality"
     },
     {
       name: "Conversion Rate",
       definition: "Percentage of engaged users completing desired campaign action",
-      current: 3.2,
       target: 5,
       benchmark: 2.8,
       unit: "%",
       category: "conversion",
       importance: "critical",
-      trend: "stable",
       description: "Direct measure of campaign effectiveness in driving behavior change"
     },
     {
       name: "Net Promoter Score",
       definition: "Likelihood of campaign participants to recommend brand (0-100)",
-      current: 67,
       target: 75,
       benchmark: 45,
       unit: "pts",
       category: "loyalty",
       importance: "high",
-      trend: "up",
       description: "Long-term brand advocacy and word-of-mouth potential"
     }
   ];
 
   const displayKPIs = kpis || defaultKPIs;
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        padding: 12,
-        titleColor: '#fff',
-        bodyColor: '#999',
-        borderColor: '#333',
-        borderWidth: 1,
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)',
+  // Detect format for North Star Metric
+  const nsFormat = detectMetricFormat(northStarMetric.name, northStarMetric.target);
+  
+  // Generate roadmap milestones for North Star Metric
+  const generateRoadmap = () => {
+    const totalTarget = northStarMetric.target;
+    const metricName = northStarMetric.name.toLowerCase();
+    
+    // AI-generated stages based on metric type
+    if (metricName.includes('reach') || metricName.includes('impressions') || metricName.includes('views')) {
+      return [
+        {
+          name: "Soft Launch",
+          target: Math.round(totalTarget * 0.05),
+          timeframe: "Day 1-3",
+          description: "Testing and optimization phase with core audience"
         },
-        ticks: {
-          color: '#999',
+        {
+          name: "Viral Ignition",
+          target: Math.round(totalTarget * 0.2),
+          timeframe: "Week 1",
+          description: "Influencer activation and early adopter engagement"
         },
-      },
-      x: {
-        grid: {
-          display: false,
+        {
+          name: "Momentum Build",
+          target: Math.round(totalTarget * 0.45),
+          timeframe: "Week 2-3",
+          description: "Organic sharing accelerates, mainstream attention"
         },
-        ticks: {
-          color: '#999',
+        {
+          name: "Peak Velocity",
+          target: Math.round(totalTarget * 0.8),
+          timeframe: "Week 4-6",
+          description: "Maximum reach velocity, cultural conversation dominance"
         },
-      },
-    },
+        {
+          name: "Saturation Point",
+          target: totalTarget,
+          timeframe: "Week 8",
+          description: "Complete market penetration achieved"
+        }
+      ];
+    } else if (metricName.includes('engagement') || metricName.includes('participation')) {
+      return [
+        {
+          name: "Activation Phase",
+          target: Math.round(totalTarget * 0.1),
+          timeframe: "Week 1",
+          description: "Initial user onboarding and first interactions"
+        },
+        {
+          name: "Habit Formation",
+          target: Math.round(totalTarget * 0.25),
+          timeframe: "Week 2-3",
+          description: "Regular engagement patterns established"
+        },
+        {
+          name: "Community Growth",
+          target: Math.round(totalTarget * 0.5),
+          timeframe: "Week 4-5",
+          description: "User-generated content and peer influence"
+        },
+        {
+          name: "Network Effects",
+          target: Math.round(totalTarget * 0.75),
+          timeframe: "Week 6-8",
+          description: "Exponential growth through social proof"
+        },
+        {
+          name: "Full Engagement",
+          target: totalTarget,
+          timeframe: "Week 10",
+          description: "Sustained high-frequency participation"
+        }
+      ];
+    } else {
+      // Default roadmap for other metrics
+      return [
+        {
+          name: "Foundation",
+          target: Math.round(totalTarget * 0.15),
+          timeframe: "Week 1-2",
+          description: "Establish baseline and early indicators"
+        },
+        {
+          name: "Growth Phase",
+          target: Math.round(totalTarget * 0.35),
+          timeframe: "Week 3-4",
+          description: "Accelerated progress and optimization"
+        },
+        {
+          name: "Acceleration",
+          target: Math.round(totalTarget * 0.6),
+          timeframe: "Week 5-6",
+          description: "Breakthrough performance achieved"
+        },
+        {
+          name: "Optimization",
+          target: Math.round(totalTarget * 0.85),
+          timeframe: "Week 7-8",
+          description: "Fine-tuning for maximum impact"
+        },
+        {
+          name: "Target Success",
+          target: totalTarget,
+          timeframe: "Week 10",
+          description: "Campaign objectives fully realized"
+        }
+      ];
+    }
   };
 
-  const performanceData = {
-    labels: displayKPIs.map(kpi => kpi.name),
-    datasets: [
-      {
-        label: 'Current',
-        data: displayKPIs.map(kpi => kpi.current),
-        backgroundColor: 'rgba(34, 197, 94, 0.8)',
-        borderColor: 'rgba(34, 197, 94, 1)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Target',
-        data: displayKPIs.map(kpi => kpi.target),
-        backgroundColor: 'rgba(59, 130, 246, 0.3)',
-        borderColor: 'rgba(59, 130, 246, 0.8)',
-        borderWidth: 1,
-      },
-      {
-        label: 'Benchmark',
-        data: displayKPIs.map(kpi => kpi.benchmark),
-        backgroundColor: 'rgba(156, 163, 175, 0.3)',
-        borderColor: 'rgba(156, 163, 175, 0.8)',
-        borderWidth: 1,
-      },
-    ],
-  };
+  const roadmapMilestones = generateRoadmap();
 
   const getImportanceColor = (importance: string) => {
     switch(importance) {
@@ -175,13 +218,27 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
     }
   };
 
-  const getTrendIcon = (trend: string) => {
-    switch(trend) {
-      case 'up': return <TrendingUp className="w-4 h-4 text-green-400" />;
-      case 'down': return <TrendingUp className="w-4 h-4 text-red-400 rotate-180" />;
-      default: return <Activity className="w-4 h-4 text-yellow-400" />;
+  const getCategoryIcon = (category: string) => {
+    switch(category) {
+      case 'awareness': return <TrendingUp className="w-4 h-4 text-blue-400" />;
+      case 'engagement': return <Activity className="w-4 h-4 text-purple-400" />;
+      case 'conversion': return <Target className="w-4 h-4 text-green-400" />;
+      case 'loyalty': return <Award className="w-4 h-4 text-orange-400" />;
+      default: return <BarChart3 className="w-4 h-4 text-neutral-400" />;
     }
   };
+
+  const calculateLift = (target: number, benchmark: number) => {
+    return ((target - benchmark) / benchmark * 100).toFixed(0);
+  };
+
+  // Prepare roadmap data for chart
+  const roadmapData = roadmapMilestones.map((milestone, index) => ({
+    name: milestone.name,
+    value: milestone.target,
+    formattedValue: formatMetricValue(milestone.target, nsFormat.unit),
+    fill: index === roadmapMilestones.length - 1 ? '#22c55e' : '#525252'
+  }));
 
   return (
     <div className="space-y-8">
@@ -193,138 +250,200 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
         </p>
       </div>
 
-      {/* North Star Metric */}
-      <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 rounded-xl p-8 border border-green-500/30 mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Award className="w-8 h-8 text-green-400" />
-            <div>
-              <h3 className="text-2xl font-medium">North Star Metric</h3>
-              <p className="text-neutral-400">{northStarMetric.name}</p>
+      {/* North Star Metric with Roadmap */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+        {/* North Star Metric */}
+        <div className="relative overflow-hidden bg-gradient-to-br from-green-500/20 via-green-600/10 to-transparent rounded-2xl p-8 border border-green-500/30 backdrop-blur-sm">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-transparent" />
+          <div className="relative">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-3 bg-green-500/20 rounded-xl backdrop-blur-sm">
+                <Award className="w-8 h-8 text-green-400" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-medium">North Star Metric</h3>
+                <p className="text-neutral-400">{northStarMetric.name}</p>
+              </div>
             </div>
-          </div>
-          <div className="text-right">
-            <p className="text-3xl font-light text-green-400">{northStarMetric.value}%</p>
-            <p className="text-sm text-neutral-400">Target: {northStarMetric.target}%</p>
+            <div className="text-center py-8">
+              <p className="text-7xl font-light text-green-400 drop-shadow-2xl">{nsFormat.formattedValue}</p>
+              <p className="text-sm text-neutral-400 mt-2">Campaign Target</p>
+            </div>
+            <p className="text-sm text-neutral-300 mt-4">{northStarMetric.description}</p>
           </div>
         </div>
-        <div className="mt-4">
-          <div className="w-full bg-neutral-800 rounded-full h-3">
-            <div 
-              className="bg-gradient-to-r from-green-400 to-green-500 h-3 rounded-full transition-all duration-500"
-              style={{ width: `${(northStarMetric.value / northStarMetric.target) * 100}%` }}
-            />
+
+        {/* Roadmap to Success */}
+        <div className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-8 border border-neutral-800">
+          <h3 className="text-xl font-medium mb-6 flex items-center gap-2">
+            <Flag className="w-5 h-5 text-green-400" />
+            Roadmap to {nsFormat.formattedValue}
+          </h3>
+          
+          {/* Roadmap Chart */}
+          <div className="h-64 mb-6">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={roadmapData}>
+                <defs>
+                  <linearGradient id="colorRoadmap" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3}/>
+                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fill: '#999', fontSize: 10 }}
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                />
+                <YAxis 
+                  tick={{ fill: '#999', fontSize: 10 }}
+                  tickFormatter={(value) => formatMetricValue(value, nsFormat.unit)}
+                />
+                <Tooltip content={<ChartTooltip formatter={(value: any) => formatMetricValue(value, nsFormat.unit)} />} />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#22c55e"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorRoadmap)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
-          <p className="text-sm text-neutral-300 mt-3">{northStarMetric.description}</p>
+
+          {/* Milestone Details */}
+          <div className="space-y-3">
+            {roadmapMilestones.slice(0, 3).map((milestone, index) => (
+              <div key={index} className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <div className={`w-2 h-2 rounded-full ${
+                    index === roadmapMilestones.length - 1 ? 'bg-green-500' : 'bg-neutral-600'
+                  }`} />
+                  <span className="text-neutral-400">{milestone.name}</span>
+                </div>
+                <span className="text-neutral-500">{milestone.timeframe}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Performance Overview Chart */}
-      <div className="bg-neutral-900 rounded-xl p-6 border border-neutral-800">
-        <h3 className="text-xl font-medium mb-6 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-green-400" />
-          Performance Overview
-        </h3>
-        <div className="h-64">
-          <Bar options={chartOptions} data={performanceData} />
-        </div>
-        <div className="flex justify-center gap-6 mt-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-500 rounded"></div>
-            <span className="text-sm text-neutral-400">Current</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-500 rounded"></div>
-            <span className="text-sm text-neutral-400">Target</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-neutral-500 rounded"></div>
-            <span className="text-sm text-neutral-400">Industry Benchmark</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Detailed KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Detailed KPI Cards with Individual Charts - Single Column */}
+      <div className="grid grid-cols-1 gap-8">
         {displayKPIs.map((kpi, index) => {
-          const performanceRatio = (kpi.current / kpi.target) * 100;
-          const benchmarkComparison = ((kpi.current - kpi.benchmark) / kpi.benchmark) * 100;
+          const lift = calculateLift(kpi.target, kpi.benchmark);
+          
+          // Data for vertical bar chart
+          const barData = [
+            { name: 'Benchmark', value: kpi.benchmark, fill: '#525252' },
+            { name: 'Target', value: kpi.target, fill: '#22c55e' },
+          ];
+
+          // Data for donut chart
+          const donutData = [
+            { name: 'Lift', value: kpi.target - kpi.benchmark, fill: '#22c55e' },
+            { name: 'Base', value: kpi.benchmark, fill: '#262626' },
+          ];
           
           return (
-            <div key={index} className="bg-neutral-900 rounded-xl p-6 border border-neutral-800 hover:border-neutral-700 transition-all">
+            <div key={index} className="bg-neutral-900/50 backdrop-blur-sm rounded-2xl p-8 border border-neutral-800 hover:border-neutral-700 transition-all shadow-xl hover:shadow-2xl">
               {/* KPI Header */}
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h4 className="text-lg font-medium flex items-center gap-2">
-                    {kpi.name}
-                    <button className="text-neutral-500 hover:text-neutral-300">
-                      <Info className="w-4 h-4" />
-                    </button>
-                  </h4>
-                  <p className="text-sm text-neutral-400 mt-1">{kpi.definition}</p>
+              <div className="flex justify-between items-start mb-6">
+                <div className="flex items-start gap-4">
+                  <div className="p-3 bg-neutral-800/50 rounded-xl backdrop-blur-sm">
+                    {getCategoryIcon(kpi.category)}
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-medium flex items-center gap-2">
+                      {kpi.name}
+                      <button className="text-neutral-500 hover:text-neutral-300 transition-colors">
+                        <Info className="w-4 h-4" />
+                      </button>
+                    </h4>
+                    <p className="text-sm text-neutral-400 mt-1">{kpi.definition}</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {getTrendIcon(kpi.trend)}
-                  <span className={`text-xs px-2 py-1 rounded ${getImportanceColor(kpi.importance)}`}>
-                    {kpi.importance}
-                  </span>
-                </div>
+                <span className={`text-xs px-3 py-1.5 rounded-full ${getImportanceColor(kpi.importance)}`}>
+                  {kpi.importance}
+                </span>
               </div>
 
-              {/* Metrics Display */}
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div>
-                  <p className="text-xs text-neutral-500 mb-1">Current</p>
-                  <p className="text-2xl font-light">{kpi.current}{kpi.unit}</p>
+              {/* Chart and Metrics */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Vertical Bar Chart */}
+                <div className="h-64 bg-neutral-950/50 rounded-xl p-4 border border-neutral-800">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={barData} margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                      <XAxis dataKey="name" tick={{ fill: '#999' }} />
+                      <YAxis tick={{ fill: '#999' }} />
+                      <Tooltip content={<ChartTooltip formatter={(value: any) => formatMetricValue(value, kpi.unit)} />} />
+                      <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                        {barData.map((entry, idx) => (
+                          <Cell key={`cell-${idx}`} fill={entry.fill} />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
                 </div>
-                <div>
-                  <p className="text-xs text-neutral-500 mb-1">Target</p>
-                  <p className="text-xl text-blue-400">{kpi.target}{kpi.unit}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-500 mb-1">Benchmark</p>
-                  <p className="text-xl text-neutral-400">{kpi.benchmark}{kpi.unit}</p>
-                </div>
-              </div>
 
-              {/* Progress Bar */}
-              <div className="mb-4">
-                <div className="flex justify-between text-xs text-neutral-500 mb-1">
-                  <span>Progress to Target</span>
-                  <span>{performanceRatio.toFixed(0)}%</span>
+                {/* Larger Donut Chart */}
+                <div className="h-64 bg-neutral-950/50 rounded-xl p-4 border border-neutral-800 flex items-center justify-center">
+                  <div className="relative">
+                    <ResponsiveContainer width={200} height={200}>
+                      <PieChart>
+                        <Pie
+                          data={donutData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={70}
+                          outerRadius={90}
+                          paddingAngle={2}
+                          dataKey="value"
+                        >
+                          {donutData.map((entry, idx) => (
+                            <Cell key={`cell-${idx}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                        <Tooltip content={<ChartTooltip formatter={(value: any) => formatMetricValue(value, kpi.unit)} />} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-center">
+                        <p className="text-4xl font-light text-green-400">+{lift}%</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="w-full bg-neutral-800 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-500 ${
-                      performanceRatio >= 100 ? 'bg-green-500' :
-                      performanceRatio >= 75 ? 'bg-yellow-500' :
-                      'bg-red-500'
-                    }`}
-                    style={{ width: `${Math.min(performanceRatio, 100)}%` }}
-                  />
+
+                {/* Metrics Display */}
+                <div className="flex flex-col justify-center space-y-4">
+                  <div className="bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-xl p-6 border border-green-500/20 backdrop-blur-sm">
+                    <p className="text-sm text-neutral-400 mb-2">Campaign Target</p>
+                    <p className="text-4xl font-light text-green-400">{formatMetricValue(kpi.target, kpi.unit)}</p>
+                  </div>
+                  <div className="bg-neutral-950/50 rounded-xl p-6 border border-neutral-800">
+                    <p className="text-sm text-neutral-500 mb-2">Industry Benchmark</p>
+                    <p className="text-3xl font-light text-neutral-400">{formatMetricValue(kpi.benchmark, kpi.unit)}</p>
+                  </div>
                 </div>
               </div>
 
               {/* Insights */}
-              <div className="space-y-2 pt-4 border-t border-neutral-800">
-                <div className="flex items-center gap-2 text-sm">
-                  {benchmarkComparison > 0 ? (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 text-green-400" />
-                      <span className="text-green-400">
-                        {benchmarkComparison.toFixed(0)}% above industry benchmark
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <AlertCircle className="w-4 h-4 text-yellow-400" />
-                      <span className="text-yellow-400">
-                        {Math.abs(benchmarkComparison).toFixed(0)}% below industry benchmark
-                      </span>
-                    </>
-                  )}
+              <div className="mt-6 pt-6 border-t border-neutral-800">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-green-500/10 rounded-lg">
+                    <ArrowUp className="w-4 h-4 text-green-400" />
+                  </div>
+                  <div>
+                    <p className="text-green-400 font-medium">{lift}% above industry standard</p>
+                    <p className="text-sm text-neutral-400 mt-1">{kpi.description}</p>
+                  </div>
                 </div>
-                <p className="text-xs text-neutral-400">{kpi.description}</p>
               </div>
             </div>
           );
@@ -332,34 +451,61 @@ export default function EnhancedKPIs({ northStarMetric, kpis }: EnhancedKPIsProp
       </div>
 
       {/* Success Criteria */}
-      <div className="bg-gradient-to-r from-neutral-900 to-neutral-800 rounded-xl p-6 border border-neutral-700">
-        <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+      <div className="bg-gradient-to-r from-neutral-900/50 to-neutral-800/50 backdrop-blur-sm rounded-2xl p-8 border border-neutral-700">
+        <h3 className="text-xl font-medium mb-6 flex items-center gap-2">
           <Target className="w-5 h-5 text-green-400" />
           Campaign Success Criteria
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-green-400">Minimum Success</h4>
-            <ul className="text-sm text-neutral-300 space-y-1">
-              <li>• Meet 80% of KPI targets</li>
-              <li>• Exceed industry benchmarks</li>
-              <li>• Positive sentiment > 70%</li>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-neutral-950/30 rounded-xl p-6 border border-neutral-800">
+            <h4 className="text-sm font-medium text-green-400 mb-3">Minimum Success</h4>
+            <ul className="text-sm text-neutral-300 space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">•</span>
+                <span>Meet 80% of KPI targets</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">•</span>
+                <span>Exceed industry benchmarks</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-green-500 mt-0.5">•</span>
+                <span>Positive sentiment > 70%</span>
+              </li>
             </ul>
           </div>
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-yellow-400">Target Success</h4>
-            <ul className="text-sm text-neutral-300 space-y-1">
-              <li>• Achieve 100% of KPI targets</li>
-              <li>• 25% above benchmarks</li>
-              <li>• Viral coefficient > 1.5</li>
+          <div className="bg-neutral-950/30 rounded-xl p-6 border border-neutral-800">
+            <h4 className="text-sm font-medium text-yellow-400 mb-3">Target Success</h4>
+            <ul className="text-sm text-neutral-300 space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="text-yellow-500 mt-0.5">•</span>
+                <span>Achieve 100% of KPI targets</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-yellow-500 mt-0.5">•</span>
+                <span>25% above benchmarks</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-yellow-500 mt-0.5">•</span>
+                <span>Viral coefficient > 1.5</span>
+              </li>
             </ul>
           </div>
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-blue-400">Breakthrough Success</h4>
-            <ul className="text-sm text-neutral-300 space-y-1">
-              <li>• Exceed targets by 20%+</li>
-              <li>• Category-leading metrics</li>
-              <li>• Cultural moment creation</li>
+          <div className="bg-neutral-950/30 rounded-xl p-6 border border-neutral-800">
+            <h4 className="text-sm font-medium text-blue-400 mb-3">Breakthrough Success</h4>
+            <ul className="text-sm text-neutral-300 space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="text-blue-500 mt-0.5">•</span>
+                <span>Exceed targets by 20%+</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-500 mt-0.5">•</span>
+                <span>Category-leading metrics</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-500 mt-0.5">•</span>
+                <span>Cultural moment creation</span>
+              </li>
             </ul>
           </div>
         </div>

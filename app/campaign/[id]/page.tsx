@@ -66,9 +66,9 @@ export default function CampaignPage() {
   const personas = campaign.audience_data?.personas || [];
   const northStarMetric = {
     name: campaign.kpi_data?.northStarMetric?.name || 'Campaign Participation Rate',
-    value: campaign.kpi_data?.northStarMetric?.value || 65,
-    target: campaign.kpi_data?.northStarMetric?.target || 100,
-    description: campaign.kpi_data?.northStarMetric?.description || 'Percentage of target audience actively engaging with campaign'
+    value: campaign.kpi_data?.northStarMetric?.value || 0,
+    target: campaign.kpi_data?.northStarMetric?.target || 100000,
+    description: campaign.kpi_data?.northStarMetric?.description || 'Total audience reached and engaged through campaign activation'
   };
 
   return (
