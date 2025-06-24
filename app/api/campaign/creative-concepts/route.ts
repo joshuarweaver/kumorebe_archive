@@ -1,18 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
 import { z } from 'zod';
-import { fal } from "@fal-ai/client";
-
-// Configure fal.ai if API key is available
-if (process.env.FAL_KEY) {
-  try {
-    fal.config({
-      credentials: process.env.FAL_KEY
-    });
-  } catch (error) {
-    console.log('Fal.ai configuration error:', error);
-  }
-}
 
 const creativeConceptsRequestSchema = z.object({
   campaignName: z.string(),
@@ -106,71 +94,22 @@ Generate 3 radically different creative concepts that will dominate culture.`;
     
     const concepts = parseCreativeConcepts(content);
     
-    // Generate images for each concept if fal.ai is configured
-    const conceptsWithImages = await Promise.all(
-      concepts.map(async (concept) => {
-        try {
-          if (process.env.FAL_KEY) {
-            // Generate static image
-            const imagePrompt = `${concept.visualDirection} ${concept.heroTreatment} professional advertising campaign visual, cinematic quality, brand photography`.substring(0, 500);
-            
-            console.log('Generating image for concept:', concept.name);
-            
-            const imageResult = await fal.run("fal-ai/flux/schnell", {
-              input: {
-                prompt: imagePrompt,
-                image_size: "landscape_16_9",
-                num_images: 1,
-                enable_safety_checker: true
-              }
-            }) as any;
-            
-            const imageUrl = imageResult?.data?.images?.[0]?.url || imageResult?.images?.[0]?.url;
-            
-            if (imageUrl) {
-              // Try to generate animated version
-              try {
-                const animatedResult = await fal.run("fal-ai/stable-video", {
-                  input: {
-                    image_url: imageUrl,
-                    motion_strength: 80,
-                    fps: 8,
-                    enable_safety_checker: true
-                  }
-                }) as any;
-                
-                const videoUrl = animatedResult?.data?.video?.url || animatedResult?.video?.url;
-                
-                return {
-                  ...concept,
-                  staticImage: imageUrl,
-                  animatedImage: videoUrl || null
-                };
-              } catch (animError) {
-                console.log('Animation generation skipped:', animError);
-                return {
-                  ...concept,
-                  staticImage: imageUrl,
-                  animatedImage: null
-                };
-              }
-            }
-          }
-          return concept;
-        } catch (error) {
-          console.error('Image generation error for concept', concept.name, ':', error);
-          console.error('Error details:', {
-            message: error instanceof Error ? error.message : 'Unknown error',
-            stack: error instanceof Error ? error.stack : undefined
-          });
-          return concept;
-        }
-      })
-    );
+    // Add Midjourney prompts to each concept
+    const conceptsWithPrompts = concepts.map(concept => {
+      // Create a professional Midjourney prompt
+      const midjourneyPrompt = createMidjourneyPrompt(concept, validatedRequest);
+      
+      return {
+        ...concept,
+        staticImage: null,
+        animatedImage: null,
+        midjourneyPrompt
+      };
+    });
     
     return NextResponse.json({
       success: true,
-      concepts: conceptsWithImages
+      concepts: conceptsWithPrompts
     }, {
       headers: {
         'Content-Type': 'application/json',
@@ -321,4 +260,46 @@ FORMATS:
 - Digital: Virtual museum where users can submit their artifacts
 - OOH: Billboards showing "future historical markers" for present locations
 PARTICIPATION HOOK: Create and submit your future artifact with impact prediction`;
+}
+
+function createMidjourneyPrompt(concept: any, request: any): string {
+  // Build a professional Midjourney prompt with proper parameters
+  const elements = [];
+  
+  // Main concept and visual direction
+  elements.push(`${concept.visualDirection}, ${concept.heroTreatment}`);
+  
+  // Add campaign context
+  elements.push(`advertising campaign for ${request.campaignName}`);
+  
+  // Add style modifiers for professional results
+  const styleModifiers = [
+    'professional advertising photography',
+    'commercial campaign',
+    'high end production',
+    'award winning',
+    'shot on medium format',
+    'perfect lighting'
+  ];
+  
+  // Add appropriate style based on visual direction
+  const direction = concept.visualDirection.toLowerCase();
+  if (direction.includes('minimal')) {
+    styleModifiers.push('minimalist', 'clean aesthetic', 'negative space');
+  } else if (direction.includes('bold') || direction.includes('vibrant')) {
+    styleModifiers.push('bold colors', 'high contrast', 'dynamic composition');
+  } else if (direction.includes('ethereal')) {
+    styleModifiers.push('ethereal lighting', 'soft focus', 'dreamlike');
+  } else if (direction.includes('cinematic')) {
+    styleModifiers.push('cinematic lighting', 'movie poster', 'dramatic');
+  }
+  
+  elements.push(...styleModifiers);
+  
+  // Add technical parameters
+  elements.push('--ar 16:9'); // Aspect ratio for campaign visuals
+  elements.push('--q 2'); // High quality
+  elements.push('--s 750'); // Stylization
+  
+  return elements.join(', ');
 }

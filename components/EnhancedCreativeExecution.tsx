@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Play, Pause, Download, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play, Pause, Download, Sparkles, ExternalLink, ImageIcon, Copy } from 'lucide-react';
 import Image from 'next/image';
 
 interface CreativeConcept {
@@ -16,6 +16,8 @@ interface CreativeConcept {
   participationHook: string;
   staticImage?: string;
   animatedImage?: string;
+  midjourneyPrompt?: string;
+  midjourneyUrl?: string;
 }
 
 interface EnhancedCreativeExecutionProps {
@@ -173,52 +175,51 @@ export default function EnhancedCreativeExecution({ concepts, campaignData }: En
           {/* Visual Section */}
           <div className="space-y-4">
             {/* Main Visual */}
-            <div className="relative aspect-video bg-muted rounded-xl overflow-hidden">
-              {activeConcept.animatedImage && isPlaying ? (
-                <video
-                  src={activeConcept.animatedImage}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  loop
-                  muted
-                />
-              ) : activeConcept.staticImage ? (
-                <Image
-                  src={activeConcept.staticImage}
-                  alt={activeConcept.name}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <Sparkles className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground">Visual concept placeholder</p>
+            <div className="relative aspect-video bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl overflow-hidden border border-border">
+              <div className="flex flex-col items-center justify-center h-full p-8">
+                <div className="text-center space-y-4">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary/10 rounded-full mb-2">
+                    <ImageIcon className="w-8 h-8 text-primary" />
                   </div>
+                  <h4 className="text-lg font-medium">Generate Visual with Midjourney</h4>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                    Create stunning campaign visuals using our optimized prompt
+                  </p>
+                  {activeConcept.midjourneyPrompt && (
+                    <a
+                      href={`https://www.midjourney.com/imagine?prompt=${encodeURIComponent(activeConcept.midjourneyPrompt)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Generate in Midjourney
+                    </a>
+                  )}
                 </div>
-              )}
-              
-              {/* Play/Pause button for animated content */}
-              {activeConcept.animatedImage && (
-                <button
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  className="absolute bottom-4 left-4 bg-background/80 backdrop-blur-sm p-2 rounded-full hover:bg-background/90 transition-colors"
-                >
-                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                </button>
-              )}
-              
-              {/* Download button */}
-              {activeConcept.staticImage && (
-                <a
-                  href={activeConcept.staticImage}
-                  download={`${activeConcept.name.replace(/\s+/g, '-')}-concept.jpg`}
-                  className="absolute bottom-4 right-4 bg-background/80 backdrop-blur-sm p-2 rounded-full hover:bg-background/90 transition-colors"
-                >
-                  <Download className="w-4 h-4" />
-                </a>
-              )}
+              </div>
             </div>
+            
+            {/* Midjourney Prompt */}
+            {activeConcept.midjourneyPrompt && (
+              <div className="bg-card/50 backdrop-blur-sm p-4 rounded-xl border border-border">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1">
+                    <h4 className="text-sm font-medium mb-2 text-muted-foreground">Midjourney Prompt</h4>
+                    <p className="text-sm font-mono bg-background/50 p-3 rounded-lg break-all">
+                      /imagine {activeConcept.midjourneyPrompt}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(`/imagine ${activeConcept.midjourneyPrompt}`)}
+                    className="p-2 hover:bg-background/50 rounded-lg transition-colors"
+                    title="Copy prompt"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
             
             {/* Visual Direction */}
             <div className="bg-card/50 backdrop-blur-sm p-6 rounded-xl border border-border">
