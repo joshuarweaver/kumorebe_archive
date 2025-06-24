@@ -94,7 +94,7 @@ export default function CampaignPage() {
           </a>
         </div>
         
-        <div className="max-w-5xl mx-auto px-8 py-24">
+        <div className="max-w-7xl mx-auto px-8 lg:px-16 py-16 lg:py-24">
         <CampaignHeader campaign={campaign} />
       
       {/* Strategic Overview Section */}

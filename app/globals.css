@@ -100,6 +100,13 @@
       margin-left: 0;
     }
   }
+  
+  /* Wider content on very large screens */
+  @media (min-width: 1536px) {
+    .sidebar-offset .max-w-7xl {
+      max-width: 90rem; /* 1440px */
+    }
+  }
 }
 
 /* Custom color utilities */
