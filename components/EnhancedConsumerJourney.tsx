@@ -399,7 +399,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
       {/* Funnel Chart */}
       <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 border border-border hover:border-muted-foreground transition-all shadow-xl hover:shadow-2xl">
         <h3 className="text-xl font-medium mb-6 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-green-400" />
+          <TrendingUp className="w-5 h-5 text-chartreuse-400" />
           Conversion Funnel Analysis
         </h3>
         <div className="h-96">
@@ -407,23 +407,23 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
             <AreaChart data={funnelData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
               <defs>
                 <linearGradient id="colorConversion" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#22c55e" stopOpacity={0.5}/>
-                  <stop offset="95%" stopColor="#22c55e" stopOpacity={0.05}/>
+                  <stop offset="5%" stopColor="rgb(var(--chartreuse-400))" stopOpacity={0.5}/>
+                  <stop offset="95%" stopColor="rgb(var(--chartreuse-400))" stopOpacity={0.05}/>
                 </linearGradient>
                 <linearGradient id="colorBenchmark" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#71717a" stopOpacity={0.4}/>
-                  <stop offset="95%" stopColor="#71717a" stopOpacity={0.05}/>
+                  <stop offset="5%" stopColor="rgb(var(--muted))" stopOpacity={0.4}/>
+                  <stop offset="95%" stopColor="rgb(var(--muted))" stopOpacity={0.05}/>
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgb(var(--border))" />
               <XAxis 
                 dataKey="name" 
-                tick={{ fill: '#a1a1aa' }}
-                axisLine={{ stroke: '#3f3f46' }}
+                tick={{ fill: 'rgb(var(--muted-foreground))' }}
+                axisLine={{ stroke: 'rgb(var(--border))' }}
               />
               <YAxis 
-                tick={{ fill: '#a1a1aa' }}
-                axisLine={{ stroke: '#3f3f46' }}
+                tick={{ fill: 'rgb(var(--muted-foreground))' }}
+                axisLine={{ stroke: 'rgb(var(--border))' }}
                 domain={[0, 100]}
                 tickFormatter={(value) => `${value}%`}
               />
@@ -434,13 +434,13 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
               <Legend 
                 wrapperStyle={{ paddingTop: '20px' }}
                 iconType="line"
-                formatter={(value) => <span style={{ color: '#a1a1aa' }}>{value}</span>}
+                formatter={(value) => <span style={{ color: 'rgb(var(--muted-foreground))' }}>{value}</span>}
               />
               <Area
                 type="monotone"
                 dataKey="benchmark"
                 name="Industry Benchmark"
-                stroke="#71717a"
+                stroke="rgb(var(--muted))"
                 strokeWidth={2}
                 fillOpacity={1}
                 fill="url(#colorBenchmark)"
@@ -450,7 +450,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
                 type="monotone"
                 dataKey="conversion"
                 name="Conversion Funnel"
-                stroke="#22c55e"
+                stroke="rgb(var(--chartreuse-400))"
                 strokeWidth={3}
                 fillOpacity={1}
                 fill="url(#colorConversion)"
@@ -462,7 +462,7 @@ export default function EnhancedConsumerJourney({ campaign }: { campaign: any })
           {funnelData.map((stage, index) => (
             <div key={index} className="text-center">
               <p className="text-xs text-muted-foreground mb-1">{stage.name}</p>
-              <p className="text-lg font-light text-green-400">{stage.conversion}%</p>
+              <p className="text-lg font-light text-chartreuse-400">{stage.conversion}%</p>
               <p className="text-xs text-muted-foreground/70">{stage.users} users</p>
             </div>
           ))}

@@ -38,6 +38,31 @@
 - ✅ Fix campaign page title visibility in dark mode
 - ✅ Update neutral colors to theme colors across components
 - ✅ Fix chart tooltip colors for dark mode
+- ✅ Fix Cultural Impact Score chart visibility in dark mode
+- ✅ Update conversion funnel chart to use chartreuse colors
+- ✅ Add sticky header with Kumorebe wordmark on campaign page
+- ✅ Fix bottom navigation bar with proper background blur
+- ✅ Replace navbar with sidebar navigation
+- ✅ Remove duplicate Kumorebe wordmark
+- ✅ Add sidebar to both homepage and campaign page
+- ✅ Create application-style sidebar with proper navigation
+- ✅ Add user profile widget with avatar and dropdown
+- ✅ Add prominent "Create Campaign" button
+- ✅ Separate section navigation for campaign pages
+
+## Pages to Create
+
+### Application Pages
+- [ ] `/dashboard` - Overview with recent campaigns, performance metrics
+- [ ] `/campaigns` - List view of all campaigns with filters
+- [ ] `/campaign/new` - New campaign creation flow
+- [ ] `/analytics` - Performance analytics and insights
+- [ ] `/audience` - Persona management and insights
+- [ ] `/content` - Creative asset library
+- [ ] `/settings` - User and account settings
+- [ ] `/help` - Help documentation and support
+- [ ] `/profile` - User profile management
+- [ ] `/billing` - Subscription and billing management
 
 ## Future Enhancements
 - [ ] Add smooth transitions when switching themes

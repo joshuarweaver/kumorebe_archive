@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { HomeSidebar } from '@/components/home-sidebar';
 
 // Initial examples - will be replaced by dynamic AI-generated ones
 const defaultExamples = [
@@ -248,24 +248,7 @@ export default function Home() {
   
   return (
     <main className="min-h-screen">
-      <div className="absolute top-8 left-8">
-        <h1 className="text-2xl font-chillax font-medium">kumorebe</h1>
-        <p className="text-base text-muted-foreground mt-1 font-satoshi">
-          build a <span className="text-foreground transition-all duration-300">{taglineWord}</span>
-        </p>
-      </div>
-      <div className="absolute top-8 right-8 flex items-center gap-6">
-        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-          Pricing
-        </button>
-        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
-          Log in
-        </button>
-        <button className="text-sm bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90 transition-colors cursor-pointer">
-          Sign up
-        </button>
-        <ThemeToggle />
-      </div>
+      <HomeSidebar onShowInfo={() => setShowOverlay(true)} />
       
       <div className="min-h-screen flex items-center justify-center px-8">
         <form onSubmit={handleSubmit} className="w-full max-w-4xl relative">
@@ -296,14 +279,7 @@ export default function Home() {
             </button>
           </div>
           
-          <div className="flex gap-4 mt-8">
-            <button
-              type="button"
-              onClick={() => setShowOverlay(true)}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors border border-border hover:border-muted-foreground px-4 py-2 rounded cursor-pointer"
-            >
-              What is this?
-            </button>
+          <div className="flex gap-4 mt-8 justify-end">
             <button
               type="button"
               onClick={async () => {

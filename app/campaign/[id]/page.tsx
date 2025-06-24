@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ThemeToggle } from '@/components/theme-toggle';
+import { AppSidebar } from '@/components/app-sidebar';
 import CampaignHeader from '@/components/CampaignHeader';
 import CampaignOverview from '@/components/CampaignOverview';
 import EnhancedPersonas from '@/components/EnhancedPersonas';
@@ -74,17 +74,27 @@ export default function CampaignPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Sticky Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center">
-          <Link href="/" className="text-2xl font-chillax font-medium text-foreground hover:text-primary transition-colors cursor-pointer">
-            kumorebe
-          </Link>
-          <ThemeToggle />
-        </div>
-      </div>
+      <AppSidebar currentPage="campaigns" />
       
-      <div className="max-w-7xl mx-auto px-8 pt-32 pb-24">
+      {/* Main Content - offset for sidebar on desktop */}
+      <div className="lg:ml-72">
+        {/* Section Navigation */}
+        <div className="fixed top-4 right-4 z-40 hidden lg:flex gap-2 bg-card/95 backdrop-blur-md rounded-full px-2 py-2 border border-border shadow-lg">
+          <a href="#audience" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+            Audience
+          </a>
+          <a href="#journey" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+            Journey
+          </a>
+          <a href="#kpis" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+            KPIs
+          </a>
+          <a href="#creative" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+            Creative
+          </a>
+        </div>
+        
+        <div className="max-w-5xl mx-auto px-8 py-24">
         <CampaignHeader campaign={campaign} />
       
       {/* Strategic Overview Section */}
@@ -138,23 +148,25 @@ export default function CampaignPage() {
         </button>
       </div>
 
-      {/* Sticky Navigation */}
-      <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-card/95 backdrop-blur-md rounded-full px-2 py-2 border border-border shadow-2xl z-50">
-        <nav className="flex gap-2">
-          <a href="#audience" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
-            Audience
-          </a>
-          <a href="#journey" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
-            Journey
-          </a>
-          <a href="#kpis" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
-            KPIs
-          </a>
-          <a href="#creative" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
-            Creative
-          </a>
-        </nav>
-      </div>
+        </div>
+        
+        {/* Mobile Section Navigation */}
+        <div className="fixed bottom-4 left-4 right-4 z-40 lg:hidden">
+          <div className="bg-card/95 backdrop-blur-md rounded-full px-2 py-2 border border-border shadow-lg flex justify-around">
+            <a href="#audience" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+              Audience
+            </a>
+            <a href="#journey" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+              Journey
+            </a>
+            <a href="#kpis" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+              KPIs
+            </a>
+            <a href="#creative" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+              Creative
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
