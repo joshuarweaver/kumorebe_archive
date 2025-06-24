@@ -84,7 +84,7 @@ const mockUser = {
   name: 'Sarah Chen',
   email: 'sarah@company.com',
   avatar: null, // Will use initials
-  plan: 'Pro'
+  plan: 'Free' // Can be 'Free', 'Pro', 'Team', 'Enterprise'
 }
 
 export function AppSidebar({ currentPage }: AppSidebarProps) {
@@ -106,6 +106,19 @@ export function AppSidebar({ currentPage }: AppSidebarProps) {
       .map(n => n[0])
       .join('')
       .toUpperCase()
+  }
+
+  const getPlanBadgeStyles = (plan: string) => {
+    switch (plan.toLowerCase()) {
+      case 'pro':
+        return 'bg-chartreuse-500/20 text-chartreuse-600 dark:text-chartreuse-400 border-chartreuse-500/30'
+      case 'team':
+        return 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30'
+      case 'enterprise':
+        return 'bg-purple-500/20 text-purple-600 dark:text-purple-400 border-purple-500/30'
+      default: // Free
+        return 'bg-muted text-muted-foreground border-border'
+    }
   }
 
   return (
@@ -170,15 +183,15 @@ export function AppSidebar({ currentPage }: AppSidebarProps) {
           </div>
 
           {/* User Profile Widget */}
-          <div className="p-4 border-b border-border">
-            <div 
-              className="relative cursor-pointer"
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-            >
-              <div className={cn(
-                "flex items-center gap-3 rounded-lg hover:bg-accent/50 transition-colors",
-                isCollapsed ? "p-2 justify-center" : "p-3"
-              )}>
+          <div className="border-b border-border">
+            <div className="p-4">
+              <div 
+                className={cn(
+                  "flex items-center gap-3 rounded-lg hover:bg-accent/50 transition-colors cursor-pointer",
+                  isCollapsed ? "p-2 justify-center" : "p-3"
+                )}
+                onClick={() => !isCollapsed && setIsUserMenuOpen(!isUserMenuOpen)}
+              >
                 <div className="w-10 h-10 rounded-full bg-chartreuse-500 flex items-center justify-center text-chartreuse-950 font-medium flex-shrink-0">
                   {mockUser.avatar ? (
                     <img src={mockUser.avatar} alt={mockUser.name} className="w-full h-full rounded-full" />
@@ -189,7 +202,15 @@ export function AppSidebar({ currentPage }: AppSidebarProps) {
                 {!isCollapsed && (
                   <>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{mockUser.name}</p>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="text-sm font-medium truncate">{mockUser.name}</p>
+                        <span className={cn(
+                          "text-xs px-1.5 py-0.5 rounded-full border font-medium",
+                          getPlanBadgeStyles(mockUser.plan)
+                        )}>
+                          {mockUser.plan}
+                        </span>
+                      </div>
                       <p className="text-xs text-muted-foreground truncate">{mockUser.email}</p>
                     </div>
                     <ChevronDown className={cn(
@@ -199,26 +220,33 @@ export function AppSidebar({ currentPage }: AppSidebarProps) {
                   </>
                 )}
               </div>
-              
-              {/* User Dropdown Menu */}
-              {isUserMenuOpen && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg overflow-hidden">
-                  <Link href="/profile" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <User className="w-4 h-4" />
-                    Profile
-                  </Link>
-                  <Link href="/billing" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <Sparkles className="w-4 h-4" />
-                    {mockUser.plan} Plan
-                  </Link>
-                  <hr className="border-border" />
-                  <button className="w-full flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors">
-                    <LogOut className="w-4 h-4" />
-                    Sign out
-                  </button>
-                </div>
-              )}
             </div>
+            
+            {/* User Menu Items - Inline */}
+            {isUserMenuOpen && !isCollapsed && (
+              <div className="pb-4 px-4 space-y-1">
+                <Link 
+                  href="/profile" 
+                  className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
+                >
+                  <User className="w-4 h-4" />
+                  Profile
+                </Link>
+                <Link 
+                  href="/billing" 
+                  className="flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Upgrade Plan
+                </Link>
+                <button 
+                  className="w-full flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:bg-accent hover:text-accent-foreground rounded-lg transition-colors text-left"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign out
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Create Button */}
