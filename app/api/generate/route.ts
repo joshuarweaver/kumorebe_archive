@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { CampaignGenerator, CampaignGenerationRequest } from '@/services/engines/campaign-generator';
 import { z } from 'zod';
+import { CulturalStrategyEngine } from '@/services/engines/cultural-strategy';
+import { ConventionViolationEngine } from '@/services/engines/convention-violation';
+import { randomUUID } from 'crypto';
 
 const campaignRequestSchema = z.object({
   brandId: z.string(),
@@ -18,17 +20,130 @@ const campaignRequestSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
     const validatedRequest = campaignRequestSchema.parse(body);
     
-    const generator = new CampaignGenerator();
-    const campaign = await generator.generateCampaign(validatedRequest);
+    console.log('Starting campaign generation for:', validatedRequest.brandName);
+    
+    // Phase 1: Cultural Analysis (optional, for context)
+    let culturalInsights, conventionViolations;
+    try {
+      const culturalEngine = new CulturalStrategyEngine();
+      const conventionEngine = new ConventionViolationEngine();
+      
+      [culturalInsights, conventionViolations] = await Promise.all([
+        culturalEngine.analyzeCulturalTensions(
+          validatedRequest.brandName,
+          validatedRequest.industry,
+          validatedRequest.targetAudience
+        ),
+        conventionEngine.mapIndustryConventions(validatedRequest.industry)
+      ]);
+    } catch (error) {
+      console.log('Cultural analysis skipped:', error);
+    }
+    
+    // Phase 2: Generate Campaign Components
+    const campaignId = randomUUID();
+    const baseUrl = `${request.nextUrl.origin}/api/campaign`;
+    
+    // 2.1 Executive Summary
+    const summaryResponse = await fetch(`${baseUrl}/summary`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...validatedRequest,
+        culturalInsights,
+        conventionViolations
+      })
+    });
+    const summaryData = await summaryResponse.json();
+    
+    if (!summaryData.success) {
+      throw new Error('Failed to generate campaign summary');
+    }
+    
+    // 2.2 Audience Development
+    const audienceResponse = await fetch(`${baseUrl}/audience`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        brandName: validatedRequest.brandName,
+        targetAudience: validatedRequest.targetAudience,
+        campaignName: summaryData.summary.campaignName,
+        bigIdea: summaryData.summary.bigIdea,
+        culturalInsights
+      })
+    });
+    const audienceData = await audienceResponse.json();
+    
+    // 2.3 KPIs & Success Metrics
+    const kpiResponse = await fetch(`${baseUrl}/kpis`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        campaignName: summaryData.summary.campaignName,
+        objectives: validatedRequest.objectives,
+        budget: validatedRequest.budget,
+        timeline: validatedRequest.timeline,
+        bigIdea: summaryData.summary.bigIdea
+      })
+    });
+    const kpiData = await kpiResponse.json();
+    
+    // 2.4 Media Strategy
+    const mediaResponse = await fetch(`${baseUrl}/media-strategy`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        campaignName: summaryData.summary.campaignName,
+        bigIdea: summaryData.summary.bigIdea,
+        targetAudience: validatedRequest.targetAudience,
+        budget: validatedRequest.budget,
+        timeline: validatedRequest.timeline,
+        platforms: ['TikTok', 'Instagram', 'X/Twitter']
+      })
+    });
+    const mediaData = await mediaResponse.json();
+    
+    // 2.5 Creative Concepts
+    const creativeResponse = await fetch(`${baseUrl}/creative`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        campaignName: summaryData.summary.campaignName,
+        bigIdea: summaryData.summary.bigIdea,
+        tagline: summaryData.summary.tagline,
+        brandValues: validatedRequest.brandValues,
+        conventionViolations,
+        platforms: ['TikTok', 'Instagram', 'X/Twitter']
+      })
+    });
+    const creativeData = await creativeResponse.json();
+    
+    // Compose Full Campaign
+    const campaign = {
+      id: campaignId,
+      brandId: validatedRequest.brandId,
+      brandName: validatedRequest.brandName,
+      industry: validatedRequest.industry,
+      summary: summaryData.summary,
+      audience: audienceData.audience,
+      kpis: kpiData.kpis,
+      mediaStrategy: mediaData.mediaStrategy,
+      creative: creativeData.creative,
+      metadata: {
+        culturalInsights,
+        conventionViolations,
+        generatedAt: new Date().toISOString()
+      }
+    };
     
     return NextResponse.json({
       success: true,
       campaign,
-      message: 'Campaign generated successfully',
+      message: 'Full campaign generated successfully',
     });
+    
   } catch (error) {
     console.error('Campaign generation error:', error);
     
