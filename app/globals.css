@@ -88,6 +88,20 @@
   }
 }
 
+/* Sidebar offset utility */
+@layer utilities {
+  .sidebar-offset {
+    margin-left: var(--sidebar-width, 18rem);
+    transition: margin-left 0.3s ease;
+  }
+  
+  @media (max-width: 1023px) {
+    .sidebar-offset {
+      margin-left: 0;
+    }
+  }
+}
+
 /* Custom color utilities */
 @layer utilities {
   .bg-chartreuse-50 { background-color: rgb(var(--chartreuse-50) / <alpha-value>); }

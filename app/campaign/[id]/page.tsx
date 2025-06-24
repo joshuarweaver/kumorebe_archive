@@ -77,7 +77,7 @@ export default function CampaignPage() {
       <AppSidebar currentPage="campaigns" />
       
       {/* Main Content - offset for sidebar on desktop */}
-      <div className="lg:ml-72">
+      <div className="sidebar-offset">
         {/* Section Navigation */}
         <div className="fixed top-4 right-4 z-40 hidden lg:flex gap-2 bg-card/95 backdrop-blur-md rounded-full px-2 py-2 border border-border shadow-lg">
           <a href="#audience" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">

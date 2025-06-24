@@ -54,8 +54,9 @@
 
 ### Application Pages
 - [ ] `/dashboard` - Overview with recent campaigns, performance metrics
+- [ ] `/showcase` - Gallery of featured generated campaigns
 - [ ] `/campaigns` - List view of all campaigns with filters
-- [ ] `/campaign/new` - New campaign creation flow
+- [ ] `/create` - Universal creation page (campaigns, brands, platforms, etc.)
 - [ ] `/analytics` - Performance analytics and insights
 - [ ] `/audience` - Persona management and insights
 - [ ] `/content` - Creative asset library
