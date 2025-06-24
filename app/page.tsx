@@ -16,6 +16,7 @@ export default function Home() {
   const [campaign, setCampaign] = useState<any>(null);
   const [showOverlay, setShowOverlay] = useState(false);
   const [examples, setExamples] = useState(defaultExamples);
+  const [taglineWord, setTaglineWord] = useState('brand');
   const inputRef = useRef<HTMLTextAreaElement>(null);
   
   // Fetch dynamic prompts on mount
@@ -28,6 +29,20 @@ export default function Home() {
         }
       })
       .catch(err => console.error('Failed to load prompts:', err));
+  }, []);
+  
+  // Tagline word rotation
+  useEffect(() => {
+    const words = ['brand', 'campaign', 'platform', 'program', 'business'];
+    let currentIndex = 0;
+    
+    const rotateWord = () => {
+      currentIndex = (currentIndex + 1) % words.length;
+      setTaglineWord(words[currentIndex]);
+    };
+    
+    const interval = setInterval(rotateWord, 2000);
+    return () => clearInterval(interval);
   }, []);
   
   useEffect(() => {
@@ -191,7 +206,10 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="absolute top-8 left-8">
-        <h1 className="text-xl font-chillax font-medium">kumorebe</h1>
+        <h1 className="text-2xl font-chillax font-medium">kumorebe</h1>
+        <p className="text-base text-neutral-500 mt-1 font-satoshi">
+          build a <span className="text-white transition-all duration-300">{taglineWord}</span>
+        </p>
       </div>
       <div className="absolute top-8 right-8 flex items-center gap-6">
         <button className="text-sm text-neutral-500 hover:text-white transition-colors">
