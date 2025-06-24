@@ -3,8 +3,33 @@
 import { Moon, Sun } from 'lucide-react'
 import { useTheme } from '@/contexts/theme-context'
 import { Button } from '@/components/ui/button'
+import { useEffect, useState } from 'react'
 
 export function ThemeToggle() {
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Don't render anything until mounted to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <Button
+        variant="ghost"
+        size="icon"
+        className="w-9 h-9 rounded-lg"
+        disabled
+      >
+        <div className="h-[1.2rem] w-[1.2rem]" />
+      </Button>
+    )
+  }
+
+  return <ThemeToggleInner />
+}
+
+function ThemeToggleInner() {
   const { theme, toggleTheme } = useTheme()
 
   return (

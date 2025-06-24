@@ -1,23 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { callGroq, GROQ_MODELS } from '@/src/lib/ai/groq';
 import { z } from 'zod';
-import * as fal from "@fal-ai/client";
+import { fal } from "@fal-ai/client";
 
 // Configure fal.ai if API key is available
 if (process.env.FAL_KEY) {
   try {
-    // fal-ai client may have different config method
-    if (typeof fal.config === 'function') {
-      fal.config({
-        credentials: process.env.FAL_KEY
-      });
-    } else if (fal.default && typeof fal.default.config === 'function') {
-      fal.default.config({
-        credentials: process.env.FAL_KEY
-      });
-    }
+    fal.config({
+      credentials: process.env.FAL_KEY
+    });
   } catch (error) {
-    console.log('Fal.ai configuration skipped:', error);
+    console.log('Fal.ai configuration error:', error);
   }
 }
 
@@ -32,19 +25,9 @@ const creativeConceptsRequestSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  console.log('Creative concepts POST endpoint called');
-  
   try {
-    // Check if required modules are available
-    if (!callGroq || !GROQ_MODELS) {
-      throw new Error('Groq module not properly initialized');
-    }
-    
     const body = await request.json();
     const validatedRequest = creativeConceptsRequestSchema.parse(body);
-    
-    // Log for debugging
-    console.log('Creative concepts request:', validatedRequest);
     
     const systemPrompt = `You are a world-class creative director generating THREE distinct creative concepts for a campaign. Each concept must be radically different in approach while supporting the same big idea.
 
@@ -99,37 +82,29 @@ ${validatedRequest.conventionViolations ? `Convention Violations: ${JSON.stringi
 
 Generate 3 radically different creative concepts that will dominate culture.`;
 
-    console.log('Calling Groq with model:', GROQ_MODELS.GEMMA2.id);
-    
     let content = '';
     try {
       const response = await callGroq(
-        GROQ_MODELS.GEMMA2.id,
+        GROQ_MODELS.LLAMA_70B.id,
         [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
         { temperature: 0.9, max_tokens: 4000 }
       );
-
-      console.log('Groq response received:', response);
       
       content = response.choices[0]?.message?.content || '';
-      console.log('Groq content length:', content.length);
-      console.log('First 500 chars:', content.substring(0, 500));
       
       if (!content || content.length < 100) {
         throw new Error('Groq returned empty or insufficient content');
       }
     } catch (groqError) {
       console.error('Groq API error:', groqError);
-      // Fallback to default concepts if Groq fails
+      // Fallback to generated concepts if Groq fails
       content = generateFallbackConcepts(validatedRequest);
     }
     
     const concepts = parseCreativeConcepts(content);
-    
-    console.log('Parsed concepts:', concepts);
     
     // Generate images for each concept if fal.ai is configured
     const conceptsWithImages = await Promise.all(
@@ -137,35 +112,57 @@ Generate 3 radically different creative concepts that will dominate culture.`;
         try {
           if (process.env.FAL_KEY) {
             // Generate static image
-            const falRun = fal.run || (fal.default && fal.default.run);
-            if (!falRun || typeof falRun !== 'function') {
-              return concept;
+            const imagePrompt = `${concept.visualDirection} ${concept.heroTreatment} professional advertising campaign visual, cinematic quality, brand photography`.substring(0, 500);
+            
+            console.log('Generating image for concept:', concept.name);
+            
+            const imageResult = await fal.run("fal-ai/flux/schnell", {
+              input: {
+                prompt: imagePrompt,
+                image_size: "landscape_16_9",
+                num_images: 1,
+                enable_safety_checker: true
+              }
+            }) as any;
+            
+            const imageUrl = imageResult?.data?.images?.[0]?.url || imageResult?.images?.[0]?.url;
+            
+            if (imageUrl) {
+              // Try to generate animated version
+              try {
+                const animatedResult = await fal.run("fal-ai/stable-video", {
+                  input: {
+                    image_url: imageUrl,
+                    motion_strength: 80,
+                    fps: 8,
+                    enable_safety_checker: true
+                  }
+                }) as any;
+                
+                const videoUrl = animatedResult?.data?.video?.url || animatedResult?.video?.url;
+                
+                return {
+                  ...concept,
+                  staticImage: imageUrl,
+                  animatedImage: videoUrl || null
+                };
+              } catch (animError) {
+                console.log('Animation generation skipped:', animError);
+                return {
+                  ...concept,
+                  staticImage: imageUrl,
+                  animatedImage: null
+                };
+              }
             }
-            
-            const imageResult = await falRun("fal-ai/flux/schnell", {
-              prompt: `${concept.visualDirection} ${concept.heroTreatment} professional advertising campaign visual, cinematic quality, brand photography`,
-              image_size: "landscape_16_9",
-              num_images: 1,
-              enable_safety_checker: true
-            }) as any;
-            
-            // Generate animated version
-            const animatedResult = await falRun("fal-ai/stable-video", {
-              image_url: imageResult.images[0].url,
-              motion_strength: 80,
-              fps: 8,
-              enable_safety_checker: true
-            }) as any;
-            
-            return {
-              ...concept,
-              staticImage: imageResult.images[0].url,
-              animatedImage: animatedResult.video?.url || null
-            };
           }
           return concept;
         } catch (error) {
-          console.error('Image generation error:', error);
+          console.error('Image generation error for concept', concept.name, ':', error);
+          console.error('Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined
+          });
           return concept;
         }
       })
@@ -199,8 +196,6 @@ Generate 3 radically different creative concepts that will dominate culture.`;
 function parseCreativeConcepts(content: string): any[] {
   const concepts: any[] = [];
   
-  console.log('Parsing content:', content.substring(0, 200));
-  
   // Split by concept headers - try multiple patterns
   const conceptPatterns = [
     /CONCEPT\s*\d+:\s*\[(.+?)\]/gi,
@@ -217,11 +212,8 @@ function parseCreativeConcepts(content: string): any[] {
     }
   }
   
-  console.log('Found concept matches:', conceptMatches.length);
-  
   // Also try splitting by concept numbers
   const conceptSections = content.split(/CONCEPT\s*\d+:/i).slice(1);
-  console.log('Found concept sections:', conceptSections.length);
   
   // Parse each concept section
   for (let i = 0; i < Math.max(conceptMatches.length, conceptSections.length); i++) {
@@ -242,8 +234,6 @@ function parseCreativeConcepts(content: string): any[] {
       concepts.push(concept);
     }
   }
-  
-  console.log('Parsed concepts count:', concepts.length);
   
   // Ensure we always return 3 concepts
   while (concepts.length < 3) {

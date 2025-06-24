@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/contexts/theme-context";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
   title: "Kumorebe - Strategy-First AI Campaign Generator",

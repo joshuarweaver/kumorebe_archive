@@ -1,7 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { HomeSidebar } from '@/components/home-sidebar';
+import { ThemeToggle } from '@/components/theme-toggle';
+import { 
+  Info,
+  DollarSign,
+  LogIn,
+  UserPlus
+} from 'lucide-react';
 
 // Initial examples - will be replaced by dynamic AI-generated ones
 const defaultExamples = [
@@ -268,9 +274,38 @@ export default function Home() {
   
   return (
     <main className="min-h-screen">
-      <HomeSidebar onShowInfo={() => setShowOverlay(true)} />
+      {/* Top Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-b border-border">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4">
+          <div>
+            <h1 className="text-lg sm:text-xl font-chillax font-medium text-foreground">kumorebe</h1>
+          </div>
+          
+          <div className="flex items-center gap-2 sm:gap-4">
+            <button
+              onClick={() => {}}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
+            >
+              Pricing
+            </button>
+            <button
+              onClick={() => {}}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Log in
+            </button>
+            <button
+              onClick={() => {}}
+              className="text-sm bg-primary text-primary-foreground hover:bg-primary/90 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors"
+            >
+              Sign up
+            </button>
+            <ThemeToggle />
+          </div>
+        </div>
+      </nav>
       
-      <div className="min-h-screen flex items-center justify-center px-8">
+      <div className="min-h-screen flex items-center justify-center px-8 pt-20">
         <form onSubmit={handleSubmit} className="w-full max-w-4xl relative">
           <textarea
             ref={inputRef}
@@ -300,6 +335,13 @@ export default function Home() {
           </div>
           
           <div className="flex gap-4 mt-8 justify-end">
+            <button
+              type="button"
+              onClick={() => setShowOverlay(true)}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors border border-border hover:border-muted-foreground px-4 py-2 rounded cursor-pointer"
+            >
+              What is this?
+            </button>
             <button
               type="button"
               onClick={async () => {
