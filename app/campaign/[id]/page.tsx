@@ -3,13 +3,16 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import { Share2 } from 'lucide-react';
 import { AppSidebar } from '@/components/app-sidebar';
 import CampaignHeader from '@/components/CampaignHeader';
 import CampaignOverview from '@/components/CampaignOverview';
 import EnhancedPersonas from '@/components/EnhancedPersonas';
 import EnhancedKPIs from '@/components/EnhancedKPIs';
 import EnhancedConsumerJourney from '@/components/EnhancedConsumerJourney';
-import CreativeExecution from '@/components/CreativeExecution';
+import EnhancedCreativeExecution from '@/components/EnhancedCreativeExecution';
+import MediaStrategy from '@/components/MediaStrategy';
+import ActivationStrategy from '@/components/ActivationStrategy';
 
 export default function CampaignPage() {
   const router = useRouter();
@@ -25,6 +28,22 @@ export default function CampaignPage() {
   const fetchCampaign = async () => {
     try {
       const response = await fetch(`/api/campaigns/${params.id}`);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError('Campaign not found');
+        } else {
+          setError(`Failed to load campaign (Error ${response.status})`);
+        }
+        return;
+      }
+      
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        setError('Server returned invalid response format');
+        return;
+      }
+      
       const data = await response.json();
       
       if (data.success) {
@@ -33,6 +52,7 @@ export default function CampaignPage() {
         setError(data.error || 'Failed to load campaign');
       }
     } catch (err) {
+      console.error('Error fetching campaign:', err);
       setError('Failed to load campaign');
     } finally {
       setLoading(false);
@@ -78,6 +98,23 @@ export default function CampaignPage() {
       
       {/* Main Content - offset for sidebar on desktop */}
       <div className="sidebar-offset">
+        {/* Sticky Share Widget */}
+        <button
+          onClick={() => {
+            const url = window.location.origin + window.location.pathname;
+            navigator.clipboard.writeText(url);
+            // You could add a toast notification here instead of alert
+            alert('Campaign URL copied to clipboard!');
+          }}
+          className="fixed bottom-8 right-8 z-40 bg-primary text-primary-foreground rounded-full p-4 shadow-xl hover:bg-primary-600 dark:hover:bg-primary-300 transition-all hover:scale-110 cursor-pointer group"
+          title="Share Campaign"
+        >
+          <Share2 className="w-5 h-5" />
+          <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-card text-card-foreground px-3 py-1.5 rounded-lg text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+            Share
+          </span>
+        </button>
+        
         {/* Section Navigation */}
         <div className="fixed top-4 right-4 z-40 hidden lg:flex gap-2 bg-card/95 backdrop-blur-md rounded-full px-2 py-2 border border-border shadow-lg">
           <a href="#audience" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
@@ -91,6 +128,12 @@ export default function CampaignPage() {
           </a>
           <a href="#creative" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
             Creative
+          </a>
+          <a href="#media" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+            Media
+          </a>
+          <a href="#activation" className="px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
+            Activation
           </a>
         </div>
         
@@ -122,49 +165,66 @@ export default function CampaignPage() {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-light mb-4">Creative Execution</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Strategic narrative and activation approach designed to maximize cultural impact
+            Three distinct creative concepts designed to dominate culture and invite participation
           </p>
         </div>
-        <CreativeExecution campaign={campaign} />
+        <EnhancedCreativeExecution 
+          concepts={campaign.creative_concepts_data || campaign.creativeConcepts}
+          campaignData={campaign} 
+        />
       </section>
       
-      {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 mt-16 pt-16 border-t border-border">
-        <button
-          onClick={() => router.push('/')}
-          className="px-8 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium cursor-pointer"
-        >
-          Generate New Campaign
-        </button>
-        <button
-          onClick={() => {
-            const url = window.location.origin + window.location.pathname;
-            navigator.clipboard.writeText(url);
-            alert('Campaign URL copied to clipboard!');
-          }}
-          className="px-8 py-3 border border-border text-foreground rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
-        >
-          Share Campaign
-        </button>
-      </div>
+      {/* Media Strategy Section */}
+      <section className="mb-16 scroll-mt-24" id="media">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-light mb-4">Media Strategy</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Channel strategy and platform tactics to maximize reach and engagement
+          </p>
+        </div>
+        <MediaStrategy mediaData={campaign.media_strategy_data || campaign.mediaStrategy} />
+      </section>
+      
+      {/* Activation Strategy Section */}
+      <section className="mb-16 scroll-mt-24" id="activation">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-light mb-4">Activation Strategy</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Phased approach to building momentum and embedding the campaign in culture
+          </p>
+        </div>
+        <ActivationStrategy 
+          activationData={campaign.activation_strategy_data || campaign.activationStrategy} 
+          campaignData={campaign} 
+        />
+      </section>
+      
 
         </div>
         
         {/* Mobile Section Navigation */}
         <div className="fixed bottom-4 left-4 right-4 z-40 lg:hidden">
-          <div className="bg-card/95 backdrop-blur-md rounded-full px-2 py-2 border border-border shadow-lg flex justify-around">
-            <a href="#audience" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
-              Audience
-            </a>
-            <a href="#journey" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
-              Journey
-            </a>
-            <a href="#kpis" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
-              KPIs
-            </a>
-            <a href="#creative" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer">
-              Creative
-            </a>
+          <div className="bg-card/95 backdrop-blur-md rounded-full px-2 py-2 border border-border shadow-lg overflow-x-auto">
+            <div className="flex gap-1 min-w-max px-2">
+              <a href="#audience" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer whitespace-nowrap">
+                Audience
+              </a>
+              <a href="#journey" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer whitespace-nowrap">
+                Journey
+              </a>
+              <a href="#kpis" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer whitespace-nowrap">
+                KPIs
+              </a>
+              <a href="#creative" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer whitespace-nowrap">
+                Creative
+              </a>
+              <a href="#media" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer whitespace-nowrap">
+                Media
+              </a>
+              <a href="#activation" className="px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground rounded-full transition-colors cursor-pointer whitespace-nowrap">
+                Activation
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -22,7 +22,16 @@ export default function Home() {
   // Fetch dynamic prompts on mount
   useEffect(() => {
     fetch('/api/prompts')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new Error("Response is not JSON");
+        }
+        return res.json();
+      })
       .then(data => {
         if (data.prompts && data.prompts.length > 0) {
           setExamples(data.prompts);
@@ -113,6 +122,15 @@ export default function Home() {
         body: JSON.stringify(payload)
       });
       
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server returned non-JSON response");
+      }
+      
       const data = await response.json();
       if (data.success) {
         // Redirect to the campaign page using the slug or ID
@@ -120,6 +138,8 @@ export default function Home() {
           ? `/campaign/${data.campaignSlug}`
           : `/campaign/${data.campaignId}`;
         window.location.href = campaignUrl;
+      } else {
+        throw new Error(data.error || 'Failed to generate campaign');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -286,6 +306,13 @@ export default function Home() {
                 // Fetch fresh prompts for randomize
                 try {
                   const res = await fetch('/api/prompts');
+                  if (!res.ok) {
+                    throw new Error(`HTTP error! status: ${res.status}`);
+                  }
+                  const contentType = res.headers.get("content-type");
+                  if (!contentType || !contentType.includes("application/json")) {
+                    throw new Error("Response is not JSON");
+                  }
                   const data = await res.json();
                   if (data.prompts && data.prompts.length > 0) {
                     const randomExample = data.prompts[Math.floor(Math.random() * data.prompts.length)];

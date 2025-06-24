@@ -9,9 +9,9 @@ const envSchema = z.object({
   KV_REST_API_URL: z.string(),
   UPSTASH_VECTOR_REST_TOKEN: z.string(),
   UPSTASH_VECTOR_REST_URL: z.string(),
-  STACK_SECRET_SERVER_KEY: z.string(),
-  NEXT_PUBLIC_STACK_PROJECT_ID: z.string(),
-  NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY: z.string(),
+  STACK_SECRET_SERVER_KEY: z.string().optional(),
+  NEXT_PUBLIC_STACK_PROJECT_ID: z.string().optional(),
+  NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY: z.string().optional(),
 });
 
 export const env = envSchema.parse({

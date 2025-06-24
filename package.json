@@ -10,6 +10,7 @@
     "db:migrate": "tsx scripts/migrate.ts"
   },
   "dependencies": {
+    "@fal-ai/client": "^1.5.0",
     "@neondatabase/serverless": "^1.0.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@upstash/redis": "^1.35.0",

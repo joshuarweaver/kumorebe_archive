@@ -107,8 +107,8 @@ export async function POST(request: NextRequest) {
     });
     const mediaData = await mediaResponse.json();
     
-    // 2.5 Creative Concepts
-    const creativeResponse = await fetch(`${baseUrl}/creative`, {
+    // 2.5 Creative Concepts (3 distinct concepts)
+    const creativeConceptsResponse = await fetch(`${baseUrl}/creative-concepts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -116,11 +116,28 @@ export async function POST(request: NextRequest) {
         bigIdea: summaryData.summary.bigIdea,
         tagline: summaryData.summary.tagline,
         brandValues: validatedRequest.brandValues,
-        conventionViolations,
-        platforms: ['TikTok', 'Instagram', 'X/Twitter']
+        targetAudience: validatedRequest.targetAudience,
+        mediaFormats: ['TikTok Video', 'Instagram Reels', 'Digital Billboard', 'Interactive Web'],
+        conventionViolations
       })
     });
-    const creativeData = await creativeResponse.json();
+    const creativeConceptsData = await creativeConceptsResponse.json();
+    
+    // 2.6 Activation Strategy
+    const activationResponse = await fetch(`${baseUrl}/activation-strategy`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        campaignName: summaryData.summary.campaignName,
+        bigIdea: summaryData.summary.bigIdea,
+        targetAudience: validatedRequest.targetAudience,
+        budget: validatedRequest.budget,
+        timeline: validatedRequest.timeline,
+        objectives: validatedRequest.objectives,
+        mediaStrategy: mediaData.mediaStrategy
+      })
+    });
+    const activationData = await activationResponse.json();
     
     // Compose Full Campaign
     const campaign = {
@@ -132,7 +149,8 @@ export async function POST(request: NextRequest) {
       audience: audienceData.audience,
       kpis: kpiData.kpis,
       mediaStrategy: mediaData.mediaStrategy,
-      creative: creativeData.creative,
+      creativeConcepts: creativeConceptsData.concepts,
+      activationStrategy: activationData.activationStrategy,
       metadata: {
         culturalInsights,
         conventionViolations,
@@ -162,7 +180,8 @@ export async function POST(request: NextRequest) {
         audience_data: audienceData.audience,
         kpi_data: kpiData.kpis,
         media_strategy_data: mediaData.mediaStrategy,
-        creative_data: creativeData.creative
+        creative_concepts_data: creativeConceptsData.concepts,
+        activation_strategy_data: activationData.activationStrategy
       })
     });
     

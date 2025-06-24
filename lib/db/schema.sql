@@ -32,6 +32,8 @@ CREATE TABLE IF NOT EXISTS campaigns (
   kpi_data JSONB,
   media_strategy_data JSONB,
   creative_data JSONB,
+  creative_concepts_data JSONB,
+  activation_strategy_data JSONB,
   
   -- Metadata
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

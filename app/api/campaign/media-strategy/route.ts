@@ -106,10 +106,29 @@ Create a media strategy that will make this campaign impossible to ignore and ma
 
 function extractChannelStrategy(content: string): any {
   const section = content.match(/CHANNEL STRATEGY.*?(?=PLATFORM|$)/is)?.[0] || '';
+  
+  // Extract hero channels
+  const heroMatch = section.match(/Hero.*?Channels?.*?:([\s\S]*?)(?=Hub|Hygiene|PLATFORM|$)/i);
+  const heroContent = heroMatch?.[1] || '';
+  const heroChannels = heroContent.match(/[-•]\s*(.+?)(?=\n|$)/g)?.map(item => item.replace(/[-•]\s*/, '').trim()) || [];
+  
+  // Extract hub channels
+  const hubMatch = section.match(/Hub.*?Channels?.*?:([\s\S]*?)(?=Hero|Hygiene|PLATFORM|$)/i);
+  const hubContent = hubMatch?.[1] || '';
+  const hubChannels = hubContent.match(/[-•]\s*(.+?)(?=\n|$)/g)?.map(item => item.replace(/[-•]\s*/, '').trim()) || [];
+  
+  // Extract hygiene channels
+  const hygieneMatch = section.match(/Hygiene.*?Channels?.*?:([\s\S]*?)(?=Hero|Hub|PLATFORM|$)/i);
+  const hygieneContent = hygieneMatch?.[1] || '';
+  const hygieneChannels = hygieneContent.match(/[-•]\s*(.+?)(?=\n|$)/g)?.map(item => item.replace(/[-•]\s*/, '').trim()) || [];
+  
   return {
-    hero: section.match(/Hero.*?:?\s*(.+?)(?:\n)/i)?.[1]?.trim() || '',
-    hub: section.match(/Hub.*?:?\s*(.+?)(?:\n)/i)?.[1]?.trim() || '',
-    hygiene: section.match(/Hygiene.*?:?\s*(.+?)(?:\n)/i)?.[1]?.trim() || '',
+    hero: heroChannels.join(', ') || 'TikTok & Instagram Reels for viral moment creation',
+    hub: hubChannels.join(', ') || 'YouTube & Twitter for community building',
+    hygiene: hygieneChannels.join(', ') || 'LinkedIn & Facebook for brand presence',
+    heroPercentage: section.match(/Hero.*?(\d+)%/i)?.[1] || '45',
+    hubPercentage: section.match(/Hub.*?(\d+)%/i)?.[1] || '35',
+    hygienePercentage: section.match(/Hygiene.*?(\d+)%/i)?.[1] || '20'
   };
 }
 

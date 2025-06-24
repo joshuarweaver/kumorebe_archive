@@ -106,6 +106,8 @@ export async function POST(
         kpi_data,
         media_strategy_data,
         creative_data,
+        creative_concepts_data,
+        activation_strategy_data,
         slug
       ) VALUES (
         ${id},
@@ -127,6 +129,8 @@ export async function POST(
         ${JSON.stringify(campaignData.kpi_data)},
         ${JSON.stringify(campaignData.media_strategy_data)},
         ${JSON.stringify(campaignData.creative_data)},
+        ${JSON.stringify(campaignData.creative_concepts_data)},
+        ${JSON.stringify(campaignData.activation_strategy_data)},
         ${slug}
       )
       ON CONFLICT (id) DO UPDATE SET
@@ -148,6 +152,8 @@ export async function POST(
         kpi_data = EXCLUDED.kpi_data,
         media_strategy_data = EXCLUDED.media_strategy_data,
         creative_data = EXCLUDED.creative_data,
+        creative_concepts_data = EXCLUDED.creative_concepts_data,
+        activation_strategy_data = EXCLUDED.activation_strategy_data,
         updated_at = CURRENT_TIMESTAMP
       RETURNING id, slug
     `;
