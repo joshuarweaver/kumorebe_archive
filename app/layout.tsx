@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "@/contexts/theme-context";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export const metadata: Metadata = {
   title: "Kumorebe - Strategy-First AI Campaign Generator",
@@ -12,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link 
           href="https://api.fontshare.com/v2/css?f[]=chillax@400,500,600,700&display=swap" 
@@ -23,8 +25,10 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="antialiased font-satoshi">
-        {children}
+      <body className="antialiased font-satoshi" suppressHydrationWarning>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

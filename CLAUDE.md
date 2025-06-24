@@ -15,564 +15,299 @@ Kumorebe operates on the principle that breakthrough marketing campaigns emerge 
 - Participation architectures that engage audiences as co-creators
 - Real-time adaptation to market dynamics
 
-## System Architecture
+## User Interface Architecture
 
-```mermaid
-graph TB
-    subgraph "Input Layer"
-        UI[User Interface]
-        API[API Gateway]
-        RT[Real-time Data Feeds]
-    end
-    
-    subgraph "Intelligence Layer"
-        CSE[Cultural Strategy Engine]
-        RTE[Real-time Trend Engine]
-        SFE[Strategic Framework Engine]
-        CVE[Convention Violation Engine]
-    end
-    
-    subgraph "Processing Layer"
-        MO[Model Orchestrator]
-        GR[Grok Integration]
-        DI[DeepInfra Models]
-        CM[Custom Models]
-    end
-    
-    subgraph "Learning Layer"
-        VDB[(Vector Database)]
-        KG[(Knowledge Graph)]
-        UL[Unsupervised Learning]
-        PD[Pattern Detection]
-    end
-    
-    subgraph "Output Layer"
-        CG[Campaign Generator]
-        SR[Strategic Reasoner]
-        PA[Participation Architect]
-        ER[Explainability Engine]
-    end
-    
-    UI --> API
-    API --> CSE
-    RT --> RTE
-    
-    CSE --> MO
-    RTE --> MO
-    SFE --> MO
-    CVE --> MO
-    
-    MO --> GR
-    MO --> DI
-    MO --> CM
-    
-    GR --> VDB
-    DI --> VDB
-    CM --> VDB
-    
-    VDB <--> KG
-    VDB --> UL
-    UL --> PD
-    
-    PD --> CG
-    MO --> SR
-    SR --> PA
-    SR --> ER
-    
-    CG --> API
-    PA --> API
-    ER --> API
-```
+### Campaign Generation Flow
 
-## Core Components
+The application features a single-page campaign experience with the following key components:
 
-### 1. Cultural Strategy Engine (CSE)
-Implements Douglas Holt's cultural strategy framework to identify ideological opportunities and cultural tensions that can be leveraged for breakthrough campaigns.
+1. **Homepage**: Streamlined input form capturing brand details, campaign goals, and inspiration with dynamic, animated UI elements
 
-```mermaid
-flowchart LR
-    subgraph "Cultural Analysis"
-        SC[Social Conversations]
-        CT[Cultural Tensions]
-        IO[Ideological Opportunities]
-        MT[Myth Markets]
-    end
-    
-    subgraph "Brand Analysis"
-        BV[Brand Values]
-        BA[Brand Archetype]
-        CC[Cultural Codes]
-        BP[Brand Positioning]
-    end
-    
-    subgraph "Strategy Synthesis"
-        CM[Cultural Mapping]
-        OI[Opportunity Identification]
-        CS[Campaign Strategy]
-    end
-    
-    SC --> CT
-    CT --> IO
-    IO --> MT
-    
-    BV --> CC
-    BA --> CC
-    CC --> BP
-    
-    MT --> CM
-    BP --> CM
-    CM --> OI
-    OI --> CS
-```
+2. **Campaign Page**: Consolidated single-page view with:
+   - Strategic Overview with comprehensive target audience descriptions and Cultural Impact Score
+   - Enhanced Personas carousel showcasing 4 detailed personas (2 primary, 2 secondary)
+   - Interactive Consumer Journey with both funnel visualization and editable flow chart
+   - Comprehensive KPI Framework with industry benchmarks and AI-generated roadmaps
+   - Creative Execution guidelines with strategic narrative
+   - Sticky navigation for easy section access
 
-### 2. Real-time Trend Engine (RTE)
-Leverages Grok's access to live X data and DeepSearch capabilities for real-time social intelligence and trend detection.
+### Visual Design System
 
-```mermaid
-flowchart TD
-    subgraph "Data Sources"
-        XD[X/Twitter Data]
-        WS[Web Signals]
-        NS[News Streams]
-        SI[Social Indicators]
-    end
-    
-    subgraph "Analysis Pipeline"
-        TA[Trend Analysis]
-        SA[Sentiment Analysis]
-        ED[Event Detection]
-        VI[Virality Indicators]
-    end
-    
-    subgraph "Strategic Insights"
-        CO[Cultural Opportunities]
-        MC[Market Conditions]
-        CA[Competitive Actions]
-        TW[Timing Windows]
-    end
-    
-    XD --> TA
-    WS --> TA
-    NS --> ED
-    SI --> SA
-    
-    TA --> VI
-    SA --> CO
-    ED --> MC
-    VI --> TW
-    
-    CO --> Output[Strategic Recommendations]
-    MC --> Output
-    CA --> Output
-    TW --> Output
-```
+The application employs a modern, glassmorphic design language:
+- **Dark theme foundation** with neutral-950 backgrounds
+- **Glassmorphism effects** using backdrop-blur and semi-transparent overlays
+- **Gradient accents** for emphasis and visual hierarchy
+- **shadcn/ui components** for consistent, modern UI elements
+- **Recharts** for all data visualizations instead of Chart.js
+- **Smooth animations** and hover effects throughout
 
-### 3. Strategic Framework Engine (SFE)
-Integrates advanced marketing frameworks ignored by current AI tools.
+### Key UI Components
 
-```mermaid
-mindmap
-  root((Strategic Frameworks))
-    Behavioral Economics
-      Nudge Theory
-      Loss Aversion
-      Choice Architecture
-      Framing Effects
-      Social Proof
-    Memetic Theory
-      STEPPS Framework
-      Viral Mechanics
-      Network Topology
-      Seeding Strategy
-      Amplification Patterns
-    Transmedia Storytelling
-      Worldbuilding
-      Spreadability
-      Drillability
-      Continuity
-      Multiplicity
-      Immersion
-      Extractability
-      Participation
-    Cultural Strategy
-      Myth Markets
-      Cultural Codes
-      Ideological Opportunities
-      Source Materials
-      Cultural Contradictions
-    Complexity Theory
-      Emergence
-      Non-linearity
-      Adaptive Systems
-      Network Effects
-      Feedback Loops
-```
+#### EnhancedPersonas
+- Carousel navigation showing 2 personas at a time
+- Comprehensive persona cards with demographics, psychographics, behaviors, and digital footprint
+- Visual distinction between primary and secondary personas
+- Smooth page transitions with indicators
 
-### 4. Convention Violation Engine (CVE)
-Maps industry conventions and identifies strategic violation opportunities.
+#### EnhancedKPIs
+- North Star Metric with AI-generated roadmap visualization
+- Vertical bar charts comparing targets to benchmarks
+- Large donut charts (200x200) showing performance lift
+- Single-column layout for better readability
+- Intelligent number formatting based on metric type
+- Success criteria framework with minimum, target, and breakthrough levels
 
-```mermaid
-stateDiagram-v2
-    [*] --> IndustryMapping
-    IndustryMapping --> ConventionIdentification
-    ConventionIdentification --> RigidityAssessment
-    RigidityAssessment --> ViolationOpportunities
-    ViolationOpportunities --> RiskAssessment
-    RiskAssessment --> AlignmentCheck
-    AlignmentCheck --> StrategicRecommendation
-    StrategicRecommendation --> [*]
-    
-    IndustryMapping: Map category rules
-    ConventionIdentification: Identify rigid conventions
-    RigidityAssessment: Assess convention strength
-    ViolationOpportunities: Generate violation ideas
-    RiskAssessment: Evaluate risks/rewards
-    AlignmentCheck: Check brand alignment
-    StrategicRecommendation: Recommend violations
-```
+#### EnhancedConsumerJourney
+- Dual visualization: funnel chart and interactive flow diagram
+- Modern area chart with gradient fills for funnel analysis
+- React Flow diagram with drag-and-drop capability
+- "Add Touchpoint" feature with 6 predefined templates
+- Dynamic funnel updates when touchpoints are added
+- Journey insights cards with performance indicators
 
-### 5. Model Orchestration Layer
-Coordinates multiple AI models for different strategic tasks.
+#### CampaignOverview
+- Expanded target audience summary (full paragraph)
+- Cultural Impact Score instead of generic "North Star Metric"
+- Strategic pillars with visual icons
+- Clean, scannable layout
 
-```mermaid
-flowchart TB
-    subgraph "Task Router"
-        TR[Task Classification]
-        MP[Model Selection]
-        PP[Pipeline Planning]
-    end
-    
-    subgraph "Grok Models"
-        GS[Social Intelligence]
-        GT[Trend Analysis]
-        GR[Real-time Insights]
-    end
-    
-    subgraph "DeepInfra Models"
-        DR[DeepSeek R1 - Reasoning]
-        QW[Qwen3 - Creative]
-        LL[Llama 4 - Speed]
-        CM[Custom LoRA - Brand Voice]
-    end
-    
-    subgraph "Output Synthesis"
-        RS[Result Synthesis]
-        QA[Quality Assurance]
-        CS[Coherence Check]
-    end
-    
-    TR --> MP
-    MP --> PP
-    
-    PP --> GS
-    PP --> GT
-    PP --> GR
-    PP --> DR
-    PP --> QW
-    PP --> LL
-    PP --> CM
-    
-    GS --> RS
-    GT --> RS
-    GR --> RS
-    DR --> RS
-    QW --> RS
-    LL --> RS
-    CM --> RS
-    
-    RS --> QA
-    QA --> CS
-```
+## Technical Stack
 
-## Database Architecture
+### Frontend
+- **Next.js 14** with App Router
+- **TypeScript** for type safety
+- **Tailwind CSS** for styling
+- **shadcn/ui** for component library
+- **Recharts** for data visualization
+- **React Flow** for interactive diagrams
+- **Lucide React** for icons
 
-### Vector Database + Knowledge Graph Hybrid
+### State Management
+- React hooks for local state
+- Campaign data fetched via API and passed as props
+- Real-time updates for interactive elements
 
-```mermaid
-erDiagram
-    CAMPAIGNS ||--o{ CAMPAIGN_VECTORS : generates
-    CAMPAIGNS ||--o{ CAMPAIGN_EVENTS : tracks
-    CAMPAIGNS ||--o{ PERFORMANCE_METRICS : measures
-    CAMPAIGN_VECTORS ||--|| VECTOR_EMBEDDINGS : contains
-    CAMPAIGN_VECTORS ||--o{ SIMILARITY_CLUSTERS : belongs_to
-    KNOWLEDGE_NODES ||--o{ RELATIONSHIPS : connects
-    CAMPAIGNS ||--o{ KNOWLEDGE_NODES : references
-    PATTERN_LIBRARY ||--o{ DETECTED_PATTERNS : contains
-    SIMILARITY_CLUSTERS ||--o{ PATTERN_LIBRARY : feeds
-    
-    CAMPAIGNS {
-        uuid id PK
-        string title
-        json strategy_metadata
-        timestamp created_at
-        string brand_id
-        string industry
-    }
-    
-    CAMPAIGN_VECTORS {
-        uuid campaign_id FK
-        vector embedding
-        string model_version
-        json metadata
-    }
-    
-    VECTOR_EMBEDDINGS {
-        binary vector_data
-        int dimensions
-        string encoding_model
-    }
-    
-    KNOWLEDGE_NODES {
-        uuid node_id PK
-        string node_type
-        json properties
-        vector embedding
-    }
-    
-    RELATIONSHIPS {
-        uuid source_id FK
-        uuid target_id FK
-        string relationship_type
-        float weight
-        json metadata
-    }
-    
-    PATTERN_LIBRARY {
-        uuid pattern_id PK
-        string pattern_type
-        json pattern_rules
-        float confidence_score
-        int occurrence_count
-    }
-```
+### Data Visualization
+- **Recharts** replacing Chart.js for modern, customizable charts
+- Custom chart components with shadcn/ui styling
+- Responsive containers with proper aspect ratios
+- Gradient fills and smooth animations
 
-## Learning Architecture
-
-### Unsupervised Learning Pipeline
-
-```mermaid
-flowchart LR
-    subgraph "Data Collection"
-        CD[Campaign Data]
-        PD[Performance Data]
-        MD[Market Data]
-        SD[Social Data]
-    end
-    
-    subgraph "Feature Engineering"
-        VE[Vector Encoding]
-        FE[Feature Extraction]
-        NE[Normalization]
-    end
-    
-    subgraph "Unsupervised Learning"
-        CL[Clustering<br/>K-means, DBSCAN]
-        AD[Anomaly Detection<br/>Isolation Forest]
-        PM[Pattern Mining<br/>Apriori, FP-Growth]
-        DR[Dimensionality Reduction<br/>PCA, t-SNE]
-    end
-    
-    subgraph "Pattern Recognition"
-        BP[Breakthrough Patterns]
-        CP[Convention Patterns]
-        SP[Success Patterns]
-        FP[Failure Patterns]
-    end
-    
-    subgraph "Strategic Insights"
-        SI[Strategic Insights]
-        PR[Pattern Rules]
-        RL[Recommendation Logic]
-    end
-    
-    CD --> VE
-    PD --> FE
-    MD --> FE
-    SD --> FE
-    
-    VE --> CL
-    FE --> NE
-    NE --> CL
-    NE --> AD
-    NE --> PM
-    
-    CL --> DR
-    AD --> BP
-    PM --> CP
-    DR --> SP
-    
-    BP --> SI
-    CP --> SI
-    SP --> PR
-    FP --> PR
-    
-    SI --> RL
-    PR --> RL
-```
-
-## Participation Architecture Designer
-
-```mermaid
-flowchart TD
-    subgraph "Participation Analysis"
-        ET[Engagement Types]
-        UM[User Motivations]
-        PM[Participation Mechanics]
-    end
-    
-    subgraph "Design Patterns"
-        CC[Co-creation]
-        UG[User-generated]
-        SC[Social Challenge]
-        CM[Community Building]
-        GP[Gamification]
-    end
-    
-    subgraph "Architecture Generation"
-        PF[Platform Selection]
-        IP[Interaction Points]
-        RP[Reward Pathways]
-        VL[Viral Loops]
-    end
-    
-    subgraph "Implementation"
-        TI[Technical Integration]
-        MI[Measurement Integration]
-        FI[Feedback Integration]
-    end
-    
-    ET --> CC
-    UM --> UG
-    PM --> SC
-    
-    CC --> PF
-    UG --> IP
-    SC --> RP
-    CM --> VL
-    GP --> VL
-    
-    PF --> TI
-    IP --> MI
-    RP --> FI
-    VL --> FI
+### Styling Approach
+```css
+/* Core design tokens */
+- Background: neutral-900/50 with backdrop-blur-sm
+- Borders: border-neutral-800 with hover:border-neutral-700
+- Shadows: shadow-xl hover:shadow-2xl
+- Gradients: from-[color]-500/20 via-[color]-600/10 to-transparent
+- Text: Neutral palette with semantic color accents
 ```
 
 ## API Structure
 
-```mermaid
-sequenceDiagram
-    participant Client
-    participant API Gateway
-    participant Auth Service
-    participant Campaign Engine
-    participant Model Orchestrator
-    participant Database Layer
-    participant Learning System
-    
-    Client->>API Gateway: Campaign Request
-    API Gateway->>Auth Service: Validate Token
-    Auth Service-->>API Gateway: Token Valid
-    
-    API Gateway->>Campaign Engine: Process Request
-    Campaign Engine->>Model Orchestrator: Analyze Context
-    
-    Model Orchestrator->>Model Orchestrator: Select Models
-    Model Orchestrator->>Database Layer: Retrieve Patterns
-    Database Layer-->>Model Orchestrator: Historical Data
-    
-    Model Orchestrator->>Campaign Engine: Strategic Insights
-    Campaign Engine->>Campaign Engine: Generate Campaign
-    
-    Campaign Engine->>Learning System: Log Campaign
-    Learning System->>Database Layer: Update Patterns
-    
-    Campaign Engine-->>API Gateway: Campaign Response
-    API Gateway-->>Client: Deliver Campaign
+### Campaign Generation Endpoints
+- `POST /api/generate` - Generate new campaign
+- `GET /api/campaigns/[id]` - Retrieve campaign details
+- `POST /api/campaigns/[id]` - Save campaign to database
+
+### Data Models
+
+```typescript
+interface Campaign {
+  id: string;
+  brand_name: string;
+  industry: string;
+  campaign_goals: string[];
+  target_audience: string;
+  inspiration_brands: string[];
+  creative_formats: string[];
+  summary_data: {
+    campaign_name: string;
+    tagline: string;
+    core_message: string;
+    strategic_approach: string;
+    cultural_insight: string;
+    convention_violation: string;
+    participation_framework: string;
+    success_metrics: string;
+  };
+  audience_data: {
+    summary: string; // Full paragraph description
+    personas: Persona[];
+  };
+  creative_data: CreativeData;
+  media_data: MediaStrategy;
+  kpi_data: {
+    northStarMetric: {
+      name: string;
+      target: number;
+      description: string;
+    };
+    kpis: KPI[];
+  };
+}
+
+interface Persona {
+  type: 'primary' | 'secondary';
+  name: string;
+  age: number;
+  occupation: string;
+  location: string;
+  income: string;
+  demographics: {
+    education: string;
+    relationship_status: string;
+    living_situation: string;
+    tech_savviness: string;
+  };
+  psychographics: {
+    values: string[];
+    lifestyle: string;
+    personality_traits: string[];
+    aspirations: string[];
+  };
+  behaviors: {
+    shopping_habits: string;
+    media_consumption: string[];
+    brand_preferences: string[];
+    pain_points: string[];
+  };
+  digital_footprint: {
+    social_platforms: string[];
+    online_activities: string[];
+    content_preferences: string[];
+    influence_level: string;
+  };
+}
+
+interface KPI {
+  name: string;
+  definition: string;
+  target: number;
+  benchmark: number;
+  unit: string;
+  category: 'awareness' | 'engagement' | 'conversion' | 'loyalty';
+  importance: 'critical' | 'high' | 'medium';
+  description: string;
+}
 ```
 
-## Key Differentiators
+## Model Orchestration
 
-### 1. Strategic Depth Over Content Volume
-- Focuses on identifying breakthrough opportunities rather than generating variations
-- Implements advanced marketing frameworks ignored by current tools
-- Provides strategic reasoning transparency
+### Current Implementation
+- **Grok** for real-time social intelligence and trend analysis
+- **DeepInfra** integration for diverse model capabilities
+- Strategic task routing based on capability requirements
 
-### 2. Real-time Cultural Intelligence
-- Continuous monitoring of cultural conversations via Grok
-- Dynamic adaptation to emerging trends and events
-- Predictive identification of cultural moments
+### Model Selection Strategy
+```typescript
+const modelSelection = {
+  culturalAnalysis: 'grok-beta',
+  creativeGeneration: 'qwen-2.5-72b',
+  strategicReasoning: 'deepseek-r1',
+  rapidPrototyping: 'llama-3.3-70b'
+};
+```
 
-### 3. Convention Violation as a Feature
-- Maps industry rules and identifies violation opportunities
-- Assesses risk/reward of convention breaking
-- Ensures brand alignment with proposed violations
+## Development Guidelines
 
-### 4. Participation-First Design
-- Creates campaigns that invite co-creation
-- Designs viral mechanics based on behavioral science
-- Builds community activation strategies
+### Component Best Practices
+1. **Modular Design**: Each component should be self-contained with clear props interfaces
+2. **Responsive First**: All components must work seamlessly on mobile through desktop
+3. **Performance**: Use React.memo for expensive renders, lazy load heavy components
+4. **Accessibility**: Ensure WCAG 2.1 AA compliance throughout
 
-### 5. Self-Improving Intelligence
-- Learns from breakthrough campaigns automatically
-- Identifies success patterns through unsupervised learning
-- Evolves strategic recommendations based on outcomes
+### State Management
+- Keep state as close to where it's needed as possible
+- Use URL parameters for shareable states (campaign ID)
+- Implement optimistic updates for better UX
 
-### 6. Model Diversity Advantage
-- Leverages 100+ models through DeepInfra
-- Assigns specialized models to specific tasks
-- Maintains brand voice through custom LoRA models
+### Error Handling
+- Graceful degradation for missing data
+- User-friendly error messages
+- Fallback UI states for loading and errors
 
-### 7. Transparent Strategic Reasoning
-- Shows step-by-step strategic logic
-- Explains framework applications
-- Builds marketer trust through transparency
+### Code Style
+```typescript
+// Consistent naming conventions
+interface ComponentNameProps {
+  // Props interface
+}
 
-## Implementation Priorities
+export default function ComponentName({ prop1, prop2 }: ComponentNameProps) {
+  // Component logic
+  return (
+    // JSX with consistent formatting
+  );
+}
+```
 
-### Phase 1: Foundation (Months 1-2)
-- Implement core Grok integration for real-time data
-- Set up DeepInfra model orchestration
-- Build basic vector database architecture
-- Create initial strategic framework libraries
+## Deployment Considerations
 
-### Phase 2: Intelligence (Months 3-4)
-- Develop Cultural Strategy Engine
-- Build Convention Violation Engine
-- Implement pattern detection algorithms
-- Create participation architecture templates
+### Environment Variables
+```env
+# AI Model APIs
+GROQ_API_KEY=
+DEEPINFRA_API_KEY=
 
-### Phase 3: Learning (Months 5-6)
-- Deploy unsupervised learning pipeline
-- Build knowledge graph relationships
-- Implement breakthrough pattern recognition
-- Create feedback loop mechanisms
+# Database
+DATABASE_URL=
 
-### Phase 4: Scale (Months 7-8)
-- Optimize model orchestration
-- Enhance real-time capabilities
-- Build comprehensive API
-- Launch beta testing program
+# Redis Cache
+REDIS_URL=
+
+# Analytics
+ANALYTICS_ID=
+```
+
+### Performance Optimization
+- Static generation for marketing pages
+- Dynamic imports for heavy components
+- Image optimization with next/image
+- API route caching with Redis
+
+### Monitoring
+- Error tracking with Sentry
+- Performance monitoring with Vercel Analytics
+- User behavior tracking for campaign effectiveness
+
+## Future Enhancements
+
+### Phase 1: Enhanced Intelligence
+- Real-time trend integration from X/Twitter
+- Competitive campaign analysis
+- Automated A/B testing recommendations
+
+### Phase 2: Advanced Personalization
+- Multi-language campaign generation
+- Regional cultural adaptation
+- Industry-specific templates
+
+### Phase 3: Analytics & Learning
+- Campaign performance tracking
+- ROI prediction models
+- Self-improving recommendation engine
+
+### Phase 4: Enterprise Features
+- Team collaboration tools
+- Brand guideline enforcement
+- API access for integrations
+- White-label capabilities
 
 ## Success Metrics
 
-### Strategic Innovation
-- Percentage of campaigns using novel approaches
-- Convention violation success rate
-- Cultural resonance scores
-- Participation engagement metrics
-
-### System Performance
-- Strategy generation speed
-- Model coordination efficiency
-- Pattern recognition accuracy
-- Learning system improvement rate
+### User Experience
+- Time to campaign generation < 30 seconds
+- Single-page load time < 2 seconds
+- Mobile responsiveness score > 95
+- User satisfaction score > 4.5/5
 
 ### Business Impact
-- Campaign breakthrough rate
-- Client retention metrics
-- Strategic insight value scores
-- Market differentiation index
+- Campaign quality score based on strategic depth
+- User retention rate > 60%
+- Generated campaigns activated rate > 40%
+- Platform differentiation index vs competitors
 
 ## Conclusion
 
-Kumorebe represents a paradigm shift in AI-powered marketing - from content generation to strategic innovation. By combining real-time cultural intelligence, advanced marketing frameworks, and self-improving learning systems, Kumorebe enables marketers to create campaigns that don't just communicate but catalyze cultural movements.
+Kumorebe represents a paradigm shift in AI-powered marketing - from content generation to strategic innovation. The platform combines cutting-edge AI models with thoughtful UX design to deliver campaigns that don't just communicate but catalyze cultural movements. The modern, glassmorphic interface reflects the forward-thinking nature of the strategies it generates, while the robust technical architecture ensures scalability and reliability for marketers worldwide.

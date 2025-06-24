@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 // Initial examples - will be replaced by dynamic AI-generated ones
 const defaultExamples = [
@@ -239,30 +240,31 @@ export default function Home() {
   
   if (phase === 'loading') {
     return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+      <main className="min-h-screen flex items-center justify-center">
         <div className="text-2xl font-light animate-pulse">creating...</div>
       </main>
     );
   }
   
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen">
       <div className="absolute top-8 left-8">
         <h1 className="text-2xl font-chillax font-medium">kumorebe</h1>
-        <p className="text-base text-neutral-500 mt-1 font-satoshi">
-          build a <span className="text-white transition-all duration-300">{taglineWord}</span>
+        <p className="text-base text-muted-foreground mt-1 font-satoshi">
+          build a <span className="text-foreground transition-all duration-300">{taglineWord}</span>
         </p>
       </div>
       <div className="absolute top-8 right-8 flex items-center gap-6">
-        <button className="text-sm text-neutral-500 hover:text-white transition-colors">
+        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
           Pricing
         </button>
-        <button className="text-sm text-neutral-500 hover:text-white transition-colors">
+        <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
           Log in
         </button>
-        <button className="text-sm bg-white text-black px-4 py-2 rounded hover:bg-neutral-200 transition-colors">
+        <button className="text-sm bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90 transition-colors">
           Sign up
         </button>
+        <ThemeToggle />
       </div>
       
       <div className="min-h-screen flex items-center justify-center px-8">
@@ -273,7 +275,7 @@ export default function Home() {
             onChange={(e) => setInput(e.target.value)}
             placeholder={placeholder}
             maxLength={2100}
-            className="w-full bg-transparent border-b border-neutral-800 focus:border-neutral-600 outline-none text-3xl font-light py-4 placeholder-neutral-800 transition-colors resize-none overflow-hidden min-h-[48px]"
+            className="w-full bg-transparent border-b border-border focus:border-muted-foreground outline-none text-3xl font-light py-4 placeholder-muted-foreground/50 transition-colors resize-none overflow-hidden min-h-[48px]"
             autoComplete="off"
             spellCheck={false}
             onKeyDown={(e) => {
@@ -285,10 +287,10 @@ export default function Home() {
           />
           
           <div className="mt-6 flex justify-between items-center">
-            <span className="text-sm text-neutral-600">{input.length} / 2100</span>
+            <span className="text-sm text-muted-foreground">{input.length} / 2100</span>
             <button 
               type="submit"
-              className="text-sm text-neutral-500 hover:text-white transition-colors cursor-pointer"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
             >
               press enter ↵
             </button>
@@ -298,7 +300,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => setShowOverlay(true)}
-              className="text-sm text-neutral-500 hover:text-white transition-colors border border-neutral-800 hover:border-neutral-600 px-4 py-2 rounded"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors border border-border hover:border-muted-foreground px-4 py-2 rounded"
             >
               What is this?
             </button>
@@ -321,7 +323,7 @@ export default function Home() {
                   setTimeout(() => handleSubmit(new Event('submit') as any), 100);
                 }
               }}
-              className="text-sm text-neutral-500 hover:text-white transition-colors border border-neutral-800 hover:border-neutral-600 px-4 py-2 rounded"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors border border-border hover:border-muted-foreground px-4 py-2 rounded"
             >
               Randomize
             </button>
@@ -330,11 +332,11 @@ export default function Home() {
       </div>
       
       {showOverlay && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center px-8" onClick={() => setShowOverlay(false)}>
+        <div className="fixed inset-0 bg-background/90 backdrop-blur-sm z-50 flex items-center justify-center px-8" onClick={() => setShowOverlay(false)}>
           <div className="max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
             <button
               onClick={() => setShowOverlay(false)}
-              className="absolute top-8 right-8 text-neutral-500 hover:text-white transition-colors"
+              className="absolute top-8 right-8 text-muted-foreground hover:text-foreground transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -343,24 +345,24 @@ export default function Home() {
             
             <h2 className="text-3xl font-light mb-8">How Kumorebe Works</h2>
             
-            <div className="space-y-6 text-neutral-300">
+            <div className="space-y-6 text-muted-foreground">
               <div>
-                <h3 className="text-white font-medium mb-2">Strategy-First AI</h3>
+                <h3 className="text-foreground font-medium mb-2">Strategy-First AI</h3>
                 <p className="text-sm leading-relaxed">Unlike typical AI tools that generate generic content, Kumorebe thinks like a Chief Strategy Officer. It identifies cultural tensions, finds ideological opportunities, and creates campaigns that catalyze movements.</p>
               </div>
               
               <div>
-                <h3 className="text-white font-medium mb-2">How to Use</h3>
+                <h3 className="text-foreground font-medium mb-2">How to Use</h3>
                 <p className="text-sm leading-relaxed">Describe your campaign vision in detail. Include your brand, target audience, the problem you're solving, and the cultural shift you want to create. The more context you provide, the more breakthrough your campaign will be.</p>
               </div>
               
               <div>
-                <h3 className="text-white font-medium mb-2">What You Get</h3>
+                <h3 className="text-foreground font-medium mb-2">What You Get</h3>
                 <p className="text-sm leading-relaxed">A complete campaign strategy including the big idea, target audience personas, KPIs, media strategy, and creative concepts. Every element is designed to create cultural impact, not just impressions.</p>
               </div>
               
               <div>
-                <h3 className="text-white font-medium mb-2">Tips for Best Results</h3>
+                <h3 className="text-foreground font-medium mb-2">Tips for Best Results</h3>
                 <ul className="text-sm leading-relaxed space-y-1">
                   <li>• Be specific about the cultural tension you want to address</li>
                   <li>• Include your brand values and what makes you different</li>
@@ -372,7 +374,7 @@ export default function Home() {
             
             <button
               onClick={() => setShowOverlay(false)}
-              className="mt-8 text-sm text-neutral-500 hover:text-white transition-colors"
+              className="mt-8 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Got it →
             </button>

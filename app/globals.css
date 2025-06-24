@@ -1,5 +1,115 @@
 @import "tailwindcss";
 
+@layer base {
+  :root {
+    /* Muted Chartreuse Monochrome Palette */
+    --chartreuse-50: 248 251 242;   /* #f8fbf2 - Very light chartreuse */
+    --chartreuse-100: 240 246 226;  /* #f0f6e2 - Light chartreuse */
+    --chartreuse-200: 220 235 195;  /* #dcebc3 - Soft chartreuse */
+    --chartreuse-300: 195 219 158;  /* #c3db9e - Muted chartreuse */
+    --chartreuse-400: 165 195 119;  /* #a5c377 - Medium chartreuse */
+    --chartreuse-500: 134 164 84;   /* #86a454 - Base muted chartreuse */
+    --chartreuse-600: 107 131 67;   /* #6b8343 - Deep chartreuse */
+    --chartreuse-700: 80 98 50;     /* #506232 - Dark chartreuse */
+    --chartreuse-800: 54 66 34;     /* #364222 - Very dark chartreuse */
+    --chartreuse-900: 27 33 17;     /* #1b2111 - Almost black chartreuse */
+    --chartreuse-950: 14 16 8;      /* #0e1008 - Black chartreuse */
+
+    /* Light mode - white background with chartreuse accents */
+    --background: 255 255 255;      /* white */
+    --foreground: 0 0 0;            /* black */
+    --card: 255 255 255;            /* white */
+    --card-foreground: 0 0 0;       /* black */
+    --popover: 255 255 255;         /* white */
+    --popover-foreground: 0 0 0;    /* black */
+    --primary: 134 164 84;          /* chartreuse-500 */
+    --primary-foreground: 255 255 255; /* white */
+    --secondary: 240 246 226;       /* chartreuse-100 */
+    --secondary-foreground: 0 0 0;  /* black */
+    --muted: 248 251 242;           /* chartreuse-50 */
+    --muted-foreground: 80 98 50;   /* chartreuse-700 */
+    --accent: 165 195 119;          /* chartreuse-400 */
+    --accent-foreground: 0 0 0;     /* black */
+    --destructive: 239 68 68;       /* red-500 */
+    --destructive-foreground: 255 255 255; /* white */
+    --border: 220 235 195;          /* chartreuse-200 */
+    --input: 220 235 195;           /* chartreuse-200 */
+    --ring: 134 164 84;             /* chartreuse-500 */
+  }
+
+  .dark {
+    /* Dark mode - black background with chartreuse accents */
+    --background: 0 0 0;            /* black */
+    --foreground: 255 255 255;      /* white */
+    --card: 17 17 17;               /* near black */
+    --card-foreground: 255 255 255; /* white */
+    --popover: 17 17 17;            /* near black */
+    --popover-foreground: 255 255 255; /* white */
+    --primary: 165 195 119;         /* chartreuse-400 */
+    --primary-foreground: 0 0 0;    /* black */
+    --secondary: 54 66 34;          /* chartreuse-800 */
+    --secondary-foreground: 255 255 255; /* white */
+    --muted: 27 33 17;              /* chartreuse-900 */
+    --muted-foreground: 195 219 158; /* chartreuse-300 */
+    --accent: 134 164 84;           /* chartreuse-500 */
+    --accent-foreground: 255 255 255; /* white */
+    --destructive: 220 38 38;       /* red-600 */
+    --destructive-foreground: 255 255 255; /* white */
+    --border: 54 66 34;             /* chartreuse-800 */
+    --input: 54 66 34;              /* chartreuse-800 */
+    --ring: 165 195 119;            /* chartreuse-400 */
+  }
+}
+
+@layer base {
+  * {
+    border-color: rgb(var(--border));
+  }
+  body {
+    background-color: rgb(var(--background));
+    color: rgb(var(--foreground));
+  }
+}
+
+/* Custom color utilities */
+@layer utilities {
+  .bg-chartreuse-50 { background-color: rgb(var(--chartreuse-50) / <alpha-value>); }
+  .bg-chartreuse-100 { background-color: rgb(var(--chartreuse-100) / <alpha-value>); }
+  .bg-chartreuse-200 { background-color: rgb(var(--chartreuse-200) / <alpha-value>); }
+  .bg-chartreuse-300 { background-color: rgb(var(--chartreuse-300) / <alpha-value>); }
+  .bg-chartreuse-400 { background-color: rgb(var(--chartreuse-400) / <alpha-value>); }
+  .bg-chartreuse-500 { background-color: rgb(var(--chartreuse-500) / <alpha-value>); }
+  .bg-chartreuse-600 { background-color: rgb(var(--chartreuse-600) / <alpha-value>); }
+  .bg-chartreuse-700 { background-color: rgb(var(--chartreuse-700) / <alpha-value>); }
+  .bg-chartreuse-800 { background-color: rgb(var(--chartreuse-800) / <alpha-value>); }
+  .bg-chartreuse-900 { background-color: rgb(var(--chartreuse-900) / <alpha-value>); }
+  .bg-chartreuse-950 { background-color: rgb(var(--chartreuse-950) / <alpha-value>); }
+  
+  .text-chartreuse-50 { color: rgb(var(--chartreuse-50) / <alpha-value>); }
+  .text-chartreuse-100 { color: rgb(var(--chartreuse-100) / <alpha-value>); }
+  .text-chartreuse-200 { color: rgb(var(--chartreuse-200) / <alpha-value>); }
+  .text-chartreuse-300 { color: rgb(var(--chartreuse-300) / <alpha-value>); }
+  .text-chartreuse-400 { color: rgb(var(--chartreuse-400) / <alpha-value>); }
+  .text-chartreuse-500 { color: rgb(var(--chartreuse-500) / <alpha-value>); }
+  .text-chartreuse-600 { color: rgb(var(--chartreuse-600) / <alpha-value>); }
+  .text-chartreuse-700 { color: rgb(var(--chartreuse-700) / <alpha-value>); }
+  .text-chartreuse-800 { color: rgb(var(--chartreuse-800) / <alpha-value>); }
+  .text-chartreuse-900 { color: rgb(var(--chartreuse-900) / <alpha-value>); }
+  .text-chartreuse-950 { color: rgb(var(--chartreuse-950) / <alpha-value>); }
+  
+  .border-chartreuse-50 { border-color: rgb(var(--chartreuse-50) / <alpha-value>); }
+  .border-chartreuse-100 { border-color: rgb(var(--chartreuse-100) / <alpha-value>); }
+  .border-chartreuse-200 { border-color: rgb(var(--chartreuse-200) / <alpha-value>); }
+  .border-chartreuse-300 { border-color: rgb(var(--chartreuse-300) / <alpha-value>); }
+  .border-chartreuse-400 { border-color: rgb(var(--chartreuse-400) / <alpha-value>); }
+  .border-chartreuse-500 { border-color: rgb(var(--chartreuse-500) / <alpha-value>); }
+  .border-chartreuse-600 { border-color: rgb(var(--chartreuse-600) / <alpha-value>); }
+  .border-chartreuse-700 { border-color: rgb(var(--chartreuse-700) / <alpha-value>); }
+  .border-chartreuse-800 { border-color: rgb(var(--chartreuse-800) / <alpha-value>); }
+  .border-chartreuse-900 { border-color: rgb(var(--chartreuse-900) / <alpha-value>); }
+  .border-chartreuse-950 { border-color: rgb(var(--chartreuse-950) / <alpha-value>); }
+}
+
 .font-chillax {
   font-family: 'Chillax', sans-serif;
 }
