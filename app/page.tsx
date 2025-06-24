@@ -1,231 +1,215 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+const examples = [
+  "overthrow big tech's monopoly on truth",
+  "make sustainability sexier than consumption", 
+  "turn mental health into a cultural revolution",
+  "destroy fast fashion with radical transparency",
+  "make banking actually human",
+  "reimagine education as rebellion"
+];
 
 export default function Home() {
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [phase, setPhase] = useState<'input' | 'loading' | 'result'>('input');
+  const [input, setInput] = useState('');
+  const [placeholder, setPlaceholder] = useState('');
+  const [campaign, setCampaign] = useState<any>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   
-  const [formData, setFormData] = useState({
-    brandId: 'test-brand-001',
-    brandName: 'EcoRevolution',
-    industry: 'sustainable fashion',
-    targetAudience: 'Environmentally conscious millennials who want style without compromise',
-    objectives: ['Increase brand awareness', 'Challenge fast fashion narrative', 'Build community'],
-    brandValues: ['Sustainability', 'Transparency', 'Radical honesty', 'Community'],
-    brandArchetype: 'rebel',
-    riskTolerance: 'high' as const,
-    budget: '$75,000',
-    timeline: '3 months'
-  });
-
+  useEffect(() => {
+    let j = 0;
+    let currentExample = 0;
+    let deleting = false;
+    
+    const type = () => {
+      const example = examples[currentExample];
+      
+      if (!deleting) {
+        if (j <= example.length) {
+          setPlaceholder(example.substring(0, j));
+          j++;
+        } else {
+          deleting = true;
+          setTimeout(() => {}, 2000);
+        }
+      } else {
+        if (j > 0) {
+          setPlaceholder(example.substring(0, j - 1));
+          j--;
+        } else {
+          deleting = false;
+          currentExample = (currentExample + 1) % examples.length;
+        }
+      }
+    };
+    
+    const interval = setInterval(type, deleting ? 30 : 80);
+    return () => clearInterval(interval);
+  }, []);
+  
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
-    setResult(null);
-
+    if (!input.trim()) return;
+    
+    setPhase('loading');
+    
+    // Parse the input to extract campaign details
+    const brandMatch = input.match(/(?:for|by|@)\s+(\w+)/i);
+    const brandName = brandMatch ? brandMatch[1] : 'Disruptor';
+    
+    const payload = {
+      brandId: `brand-${Date.now()}`,
+      brandName,
+      industry: detectIndustry(input),
+      targetAudience: "Culture creators and change makers",
+      objectives: ["Create cultural disruption", "Build authentic community", "Drive systemic change"],
+      brandValues: ["Radical honesty", "Bold action", "Authentic rebellion"],
+      brandArchetype: "rebel",
+      riskTolerance: "high"
+    };
+    
     try {
       const response = await fetch('/api/generate', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
-
+      
       const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate campaign');
+      if (data.success) {
+        setCampaign(data.campaign);
+        setPhase('result');
       }
-      
-      setResult(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      console.error('Error:', error);
+      setPhase('input');
     }
   };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  
+  const detectIndustry = (text: string): string => {
+    const industries: Record<string, string[]> = {
+      'technology': ['tech', 'app', 'platform', 'digital', 'software'],
+      'fashion': ['fashion', 'clothing', 'style', 'wear', 'apparel'],
+      'finance': ['banking', 'finance', 'money', 'payment', 'invest'],
+      'health': ['health', 'wellness', 'mental', 'medical', 'care'],
+      'education': ['education', 'learning', 'school', 'teach', 'study'],
+      'food': ['food', 'restaurant', 'eat', 'drink', 'coffee'],
+    };
+    
+    const lowercaseText = text.toLowerCase();
+    for (const [industry, keywords] of Object.entries(industries)) {
+      if (keywords.some(keyword => lowercaseText.includes(keyword))) {
+        return industry;
+      }
+    }
+    return 'consumer';
   };
-
-  const handleArrayChange = (field: 'objectives' | 'brandValues', index: number, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: prev[field].map((item, i) => i === index ? value : item)
-    }));
-  };
-
-  return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 to-black text-white p-8">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-5xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-600 text-transparent bg-clip-text">
-          Kumorebe AI
-        </h1>
-        <p className="text-xl text-gray-400 mb-8">Strategy-First Campaign Generator</p>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-gray-800 rounded-lg p-6 shadow-xl">
-            <h2 className="text-2xl font-semibold mb-6">Campaign Parameters</h2>
-            
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Brand Name</label>
-                <input
-                  type="text"
-                  name="brandName"
-                  value={formData.brandName}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Industry</label>
-                <input
-                  type="text"
-                  name="industry"
-                  value={formData.industry}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Target Audience</label>
-                <textarea
-                  name="targetAudience"
-                  value={formData.targetAudience}
-                  onChange={handleInputChange}
-                  rows={2}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Objectives</label>
-                {formData.objectives.map((obj, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    value={obj}
-                    onChange={(e) => handleArrayChange('objectives', index, e.target.value)}
-                    className="w-full px-4 py-2 mb-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                ))}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Brand Values</label>
-                {formData.brandValues.map((value, index) => (
-                  <input
-                    key={index}
-                    type="text"
-                    value={value}
-                    onChange={(e) => handleArrayChange('brandValues', index, e.target.value)}
-                    className="w-full px-4 py-2 mb-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  />
-                ))}
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Brand Archetype</label>
-                <select
-                  name="brandArchetype"
-                  value={formData.brandArchetype}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  <option value="rebel">Rebel</option>
-                  <option value="hero">Hero</option>
-                  <option value="creator">Creator</option>
-                  <option value="sage">Sage</option>
-                  <option value="explorer">Explorer</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium mb-2">Risk Tolerance</label>
-                <select
-                  name="riskTolerance"
-                  value={formData.riskTolerance}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-2 bg-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'Generating Campaign...' : 'Generate Campaign'}
-              </button>
-            </form>
-          </div>
-
-          <div className="bg-gray-800 rounded-lg p-6 shadow-xl">
-            <h2 className="text-2xl font-semibold mb-6">Campaign Result</h2>
-            
-            {error && (
-              <div className="bg-red-900/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-4">
-                {error}
-              </div>
-            )}
-            
-            {result && (
-              <div className="space-y-4">
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-purple-400 mb-2">
-                    {result.campaign.title}
-                  </h3>
-                  <div className="space-y-2 text-sm">
-                    <p><span className="text-gray-400">Framework:</span> {result.campaign.strategyMetadata.framework}</p>
-                    <p><span className="text-gray-400">Cultural Tension:</span> {result.campaign.strategyMetadata.culturalTension}</p>
-                    <p><span className="text-gray-400">Myth Market:</span> {result.campaign.strategyMetadata.mythMarket}</p>
-                  </div>
-                </div>
-
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h4 className="font-semibold text-pink-400 mb-2">Convention Violations</h4>
-                  {result.campaign.conventionViolations.map((violation: any, index: number) => (
-                    <div key={index} className="mb-2 text-sm">
-                      <p className="text-gray-300">{violation.violation}</p>
-                      <p className="text-gray-500">Risk: {violation.riskLevel}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h4 className="font-semibold text-green-400 mb-2">Participation Architecture</h4>
-                  <p className="text-sm text-gray-300">Type: {result.campaign.participationArchitecture.engagementType}</p>
-                  <p className="text-sm text-gray-300">Platforms: {result.campaign.participationArchitecture.platforms.join(', ')}</p>
-                </div>
-              </div>
-            )}
-            
-            {!result && !error && (
-              <p className="text-gray-500 text-center py-8">
-                Configure your campaign parameters and click Generate to see results
-              </p>
-            )}
-          </div>
+  
+  if (phase === 'result' && campaign) {
+    return (
+      <main className="min-h-screen bg-black text-white">
+        <div className="absolute top-8 right-8">
+          <h1 className="text-xl font-chillax font-medium">kumorebe</h1>
         </div>
+        
+        <div className="max-w-4xl mx-auto px-8 py-24">
+          <div className="mb-16">
+            <h2 className="text-6xl font-light mb-4">{campaign.summary?.campaignName || 'Untitled Campaign'}</h2>
+            <p className="text-2xl text-neutral-500">{campaign.summary?.tagline || ''}</p>
+          </div>
+          
+          <div className="space-y-12">
+            <div>
+              <h3 className="text-sm uppercase tracking-wider text-neutral-600 mb-3">The Idea</h3>
+              <p className="text-xl leading-relaxed">{campaign.summary?.bigIdea || ''}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm uppercase tracking-wider text-neutral-600 mb-3">The Audience</h3>
+              <p className="text-lg text-neutral-300">{campaign.audience?.primaryPersona?.psychographics || ''}</p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm uppercase tracking-wider text-neutral-600 mb-3">The Impact</h3>
+              <p className="text-lg text-neutral-300">{campaign.kpis?.northStarMetric?.metric || ''}: <span className="text-white">{campaign.kpis?.northStarMetric?.target || ''}</span></p>
+            </div>
+            
+            <div>
+              <h3 className="text-sm uppercase tracking-wider text-neutral-600 mb-3">The Execution</h3>
+              <p className="text-lg text-neutral-300">{campaign.creative?.heroConcept?.narrative || ''}</p>
+            </div>
+          </div>
+          
+          <button
+            onClick={() => {
+              setPhase('input');
+              setCampaign(null);
+              setInput('');
+            }}
+            className="mt-20 text-neutral-500 hover:text-white transition-colors"
+          >
+            create another →
+          </button>
+        </div>
+      </main>
+    );
+  }
+  
+  if (phase === 'loading') {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-2xl font-light animate-pulse">creating...</div>
+      </main>
+    );
+  }
+  
+  return (
+    <main className="min-h-screen bg-black text-white">
+      <div className="absolute top-8 left-8">
+        <h1 className="text-xl font-chillax font-medium">kumorebe</h1>
+      </div>
+      <div className="absolute top-8 right-8 flex items-center gap-6">
+        <button className="text-sm text-neutral-500 hover:text-white transition-colors">
+          Pricing
+        </button>
+        <button className="text-sm text-neutral-500 hover:text-white transition-colors">
+          Log in
+        </button>
+        <button className="text-sm bg-white text-black px-4 py-2 rounded hover:bg-neutral-200 transition-colors">
+          Sign up
+        </button>
+      </div>
+      
+      <div className="min-h-screen flex items-center justify-center px-8">
+        <form onSubmit={handleSubmit} className="w-full max-w-4xl">
+          <textarea
+            ref={inputRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={placeholder}
+            maxLength={2100}
+            className="w-full bg-transparent border-b border-neutral-800 focus:border-neutral-600 outline-none text-3xl font-light py-4 placeholder-neutral-800 transition-colors resize-none h-32"
+            autoComplete="off"
+            spellCheck={false}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && e.metaKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
+          />
+          
+          <div className="mt-6 flex justify-between items-center">
+            <span className="text-sm text-neutral-600">{input.length} / 2100</span>
+            <span className="text-sm text-neutral-500">press cmd+enter →</span>
+          </div>
+        </form>
       </div>
     </main>
   );
